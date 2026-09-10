@@ -4,7 +4,12 @@ import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 3000;
 const TMDB_TOKEN = process.env.TMDB_TOKEN;
-
+const REGION = "BR";
+const PROVIDER_NETFLIX = 8;
+const PROVIDER_PRIME = 119;
+const PROVIDER_MAX = 1899;
+const COMPANY_DC = 9993;
+const COMPANY_MARVEL = 420;
 app.use(cors());
 app.use(express.json());
 
@@ -25,16 +30,44 @@ app.get("/api/discover", async (req, res) => {
       accept: "application/json"
     };
 
-    const [moviesResponse, tvResponse] = await Promise.all([
-      fetch(
-        "https://api.themoviedb.org/3/discover/movie?language=pt-BR&sort_by=primary_release_date.desc&page=1",
-        { headers }
-      ),
-      fetch(
-        "https://api.themoviedb.org/3/discover/tv?language=pt-BR&sort_by=first_air_date.desc&page=1",
-        { headers }
-      )
-    ]);
+    const category = req.query.category || "all";
+
+let filter = "";
+
+if (category === "netflix") {
+  filter = `&watch_region=${REGION}&with_watch_providers=${PROVIDER_NETFLIX}`;
+}
+
+if (category === "prime") {
+  filter = `&watch_region=${REGION}&with_watch_providers=${PROVIDER_PRIME}`;
+}
+
+if (category === "max") {
+  filter = `&watch_region=${REGION}&with_watch_providers=${PROVIDER_MAX}`;
+}
+
+if (category === "dc") {
+  filter = `&with_companies=${COMPANY_DC}`;
+}
+
+if (category === "marvel") {
+  filter = `&with_companies=${COMPANY_MARVEL}`;
+}
+
+if (category === "anime") {
+  filter = `&with_genres=16&with_original_language=ja`;
+}
+
+const [moviesResponse, tvResponse] = await Promise.all([
+  fetch(
+    `https://api.themoviedb.org/3/discover/movie?language=pt-BR&sort_by=popularity.desc${filter}`,
+    { headers }
+  ),
+  fetch(
+    `https://api.themoviedb.org/3/discover/tv?language=pt-BR&sort_by=popularity.desc${filter}`,
+    { headers }
+  )
+]);
 
     if (!moviesResponse.ok || !tvResponse.ok) {
       throw new Error("Erro ao consultar o TMDB");
