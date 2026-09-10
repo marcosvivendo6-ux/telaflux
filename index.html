@@ -156,7 +156,41 @@ function updateList(){
  document.getElementById("grid").innerHTML=arr.map(card).join("")||'<div class="empty" style="grid-column:1/-1">Nenhum título encontrado.</div>';
  updateList();
 }
-function card(x){let on=favorites.includes(x.id);return `<article class="card"><div class="poster" style="--c1:${x.c1};--c2:${x.c2};background-image:url('https://image.tmdb.org/t/p/w500${x.img}')"><span class="badge">${x.tag}</span><button class="fav ${on?"on":""}" onclick="event.stopPropagation();toggleFav(${x.id})">${on?"♥":"♡"}</button><div class="poster-title">${x.title}</div></div><div class="card-body"><div class="title">${x.title}</div><div class="meta">${x.date} · ${x.type==="filme"?"Filme":"Série"} · <span class="rating">★ ${x.rating}</span></div><span class="platform">${x.platform}</span><div class="details"><button onclick="openById(${x.id})">Detalhes</button><button onclick="trailer('${x.title.replaceAll("'","")}')">▶ Trailer</button></div></div></article>`}
+function card(x){
+  let on=favorites.includes(x.id);
+
+  let poster = "";
+
+  if(x.img){
+    poster = x.img.startsWith("http")
+      ? x.img
+      : "https://image.tmdb.org/t/p/w780" + x.img;
+  }
+
+  return `<article class="card">
+    <div class="poster"
+      style="--c1:${x.c1};--c2:${x.c2};${poster ? `background-image:url('${poster}')` : ""}">
+      <span class="badge">${x.tag}</span>
+      <button class="fav ${on?"on":""}" onclick="event.stopPropagation();toggleFav(${x.id})">
+        ${on?"♥":"♡"}
+      </button>
+      <div class="poster-title">${x.title}</div>
+    </div>
+
+    <div class="card-body">
+      <div class="title">${x.title}</div>
+      <div class="meta">
+        ${x.date} · ${x.type==="filme"?"Filme":"Série"} ·
+        <span class="rating">★ ${x.rating}</span>
+      </div>
+      <span class="platform">${x.platform}</span>
+      <div class="details">
+        <button onclick="openById(${x.id})">Detalhes</button>
+        <button onclick="trailer('${x.title.replaceAll("'","")}')">▶ Trailer</button>
+      </div>
+    </div>
+  </article>`
+}
 async function toggleFav(id){
  const x=data.find(a=>a.id===id), sid=localStorage.getItem("telaflux_session");
  if(sid && x){try{await fetch("/api/watchlist",{method:"POST",headers:{"Content-Type":"application/json","x-telaflux-session":sid},body:JSON.stringify({media_id:Number(id),media_type:x.type==="serie"?"tv":"movie",watchlist:!favorites.includes(id)})})}catch(e){}}
