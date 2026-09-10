@@ -71,7 +71,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
   <div id="apiNote" class="api-note"><span class="live-dot"></span><b>Conectando ao catálogo...</b> — buscando filmes e séries automaticamente.</div><div class="searchbar">
     <input id="search" placeholder="🔎 Buscar filme ou série..." oninput="render()">
     <select id="type" onchange="render()"><option value="all">Todos</option><option value="filme">Filmes</option><option value="serie">Séries</option></select>
-    <select id="platform" onchange="render()"><option value="all">Todas as plataformas</option><option>Netflix</option><option>Prime Video</option><option>Disney+</option><option>HBO Max</option><option>Apple TV+</option></select>
+    <select id="platform" onchange="oadCatalog()"><option value="all">Todas as plataformas</option><option value="netflix">Netflix</option><option value="prime">Prime Video</option><option value="max">HBO Max</option><option value="dc">DC</option><option value="marvel">Marvel</option><option value="anime">Animes</option><option value="disney">Disney+</option><option value="apple">Apple TV+</option></select>
     <select id="genre" onchange="render()"><option value="all">Todos os gêneros</option><option>Ação</option><option>Drama</option><option>Comédia</option><option>Ficção</option><option>Terror</option><option>Romance</option></select>
   </div>
   <div class="chips">
@@ -115,13 +115,13 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
 const API = "https://telaflux-api.onrender.com/api";
 async function loadCatalog(){
   try{
-    const res=await fetch(API+"/discover");
+    const res=await fetch(API+"/discover?category="+document.getElementById("platform").value);
     if(!res.ok) throw new Error("API indisponível");
     const payload=await res.json();
     data.splice(0,data.length,...payload.results.map((x,i)=>({
       id:x.id, title:x.title||x.name, type:x.media_type==="tv"?"serie":"filme",
       date:(x.release_date||x.first_air_date||"").split("-").reverse().join("/"),
-      platform:x.platform||"Streaming", genres:x.genres||[], rating:Number(x.vote_average||0).toFixed(1),
+      platform:x.platform||"Streaming", provider:document.getElementById("platform").value,, genres:x.genres||[], rating:Number(x.vote_average||0).toFixed(1),
       desc:x.overview||"Sem sinopse disponível.", c1:"#2a2d3a",c2:"#0f1117",
       tag:x.is_new?"NOVO":"EM DESTAQUE", img:x.poster_path
     })));
@@ -149,7 +149,7 @@ function updateList(){
 }
   function render(){
  const q=document.getElementById("search").value.toLowerCase(),type=document.getElementById("type").value,plat=document.getElementById("platform").value,genre=document.getElementById("genre").value;
- let arr=data.filter(x=>(!q||x.title.toLowerCase().includes(q))&&(type==="all"||x.type===type)&&(plat==="all"||x.platform===plat)&&(genre==="all"||x.genres.includes(genre)));
+ let arr=data.filter(x=>(!q||x.title.toLowerCase().includes(q))&&(type==="all"||x.type===type)&&(plat==="all"||x.provider===plat)&&(genre==="all"||x.genres.includes(genre)));
  if(quick==="filme")arr=arr.filter(x=>x.type==="filme"); if(quick==="serie")arr=arr.filter(x=>x.type==="serie");
  if(quick==="hoje")arr=arr.filter(x=>x.rating>=8.2); if(quick==="breve")arr=arr.filter(x=>!x.tag.includes("DISPONÍVEL"));
  document.getElementById("count").textContent=`${arr.length} título${arr.length!==1?"s":""}`;
