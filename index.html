@@ -115,7 +115,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
 const API = "https://telaflux-api.onrender.com/api";
 async function loadCatalog(){
   try{
-    const res=await fetch(API+"/discover?category="+document.getElementById("platform").value);
+    const res=await fetch(API+"/discover?category="+encodeURIComponent(document.getElementById("platform").value);
     if(!res.ok) throw new Error("API indisponível");
     const payload=await res.json();
     data.splice(0,data.length,...payload.results.map((x,i)=>({
