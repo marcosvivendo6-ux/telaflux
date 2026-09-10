@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<meta name="description" content="TelaFlux: descubra lançamentos, filmes, séries, trailers e recomendações em um só lugar.">
+<title>TelaFlux — Filmes, Séries e Lançamentos</title>
+<style>
+:root{
+  --bg:#08090d;--panel:#11131a;--panel2:#171a23;--text:#f5f5f7;--muted:#a7abb8;
+  --accent:#ff315c;--accent2:#7c5cff;--line:#252936;--good:#46d39a;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:
+radial-gradient(circle at 15% -10%,#39204a 0,transparent 32%),radial-gradient(circle at 85% 0,#24183f 0,transparent 28%),var(--bg);
+color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,select{font:inherit}.container{width:min(1180px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:rgba(8,9,13,.82);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav{height:70px;display:flex;align-items:center;gap:24px}.logo{font-size:23px;font-weight:900;letter-spacing:-1px}.logo span{color:var(--accent)}
+nav{display:flex;gap:18px;margin-left:auto}nav a{color:var(--muted);text-decoration:none;font-size:14px}nav a:hover{color:white}
+.actions{display:flex;gap:8px}.iconbtn,.primary,.ghost,.chip{border:0;border-radius:12px;cursor:pointer;color:white}
+.iconbtn{background:var(--panel2);padding:10px 12px}.primary{background:linear-gradient(135deg,var(--accent),#ff6a3d);padding:12px 17px;font-weight:800}.ghost{background:transparent;border:1px solid var(--line);padding:11px 16px}
+.hero{min-height:500px;display:flex;align-items:center;padding:70px 0 55px}.hero-copy{max-width:680px}.eyebrow{color:#ff6683;text-transform:uppercase;letter-spacing:2px;font-size:12px;font-weight:900}
+h1{font-size:clamp(42px,7vw,78px);line-height:.94;letter-spacing:-4px;margin:13px 0 20px}.hero p{font-size:18px;color:#c5c8d2;line-height:1.6;max-width:600px}.hero-buttons{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+.hero-art{margin-left:auto;width:340px;height:390px;border-radius:26px;position:relative;overflow:hidden;background:
+linear-gradient(160deg,#31204d,#d84955 55%,#151522);box-shadow:0 30px 80px #000;transform:rotate(4deg)}
+.hero-art:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.8));}
+.hero-art .arttitle{position:absolute;bottom:25px;left:25px;font-size:38px;font-weight:950;letter-spacing:-2px}
+.section{padding:42px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:20px}.section h2{font-size:30px;margin:0;letter-spacing:-1.5px}.section-head p{color:var(--muted);margin:5px 0 0}
+.searchbar{display:flex;gap:10px;flex-wrap:wrap;background:var(--panel);padding:12px;border:1px solid var(--line);border-radius:18px;margin:20px 0}.searchbar input,.searchbar select{flex:1;min-width:170px;background:#0b0d12;border:1px solid var(--line);color:white;border-radius:11px;padding:13px;outline:none}.searchbar button{padding:0 18px}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:5px}.chip{white-space:nowrap;background:var(--panel);border:1px solid var(--line);padding:9px 13px;color:#c9ccd5}.chip.active{background:#2a203a;border-color:#8a5fff;color:white}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;overflow:hidden;transition:.22s;position:relative}.card:hover{transform:translateY(-5px);border-color:#454a5b}
+.poster{height:270px;position:relative;display:flex;align-items:end;padding:15px;background:linear-gradient(145deg,var(--c1),var(--c2));overflow:hidden}.poster:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 25%,rgba(0,0,0,.78));}.realposter{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.poster .poster-title{position:relative;z-index:1;font-size:24px;font-weight:950;line-height:.95;letter-spacing:-1px;text-shadow:0 2px 12px #000}
+.badge{position:absolute;z-index:2;top:10px;left:10px;background:rgba(0,0,0,.62);padding:6px 8px;border-radius:8px;font-size:11px;font-weight:800}.fav{position:absolute;z-index:3;right:10px;top:10px;border:0;background:rgba(0,0,0,.55);color:white;width:34px;height:34px;border-radius:50%;cursor:pointer}.fav.on{color:#ff4569}
+.card-body{padding:13px}.title{font-weight:800}.meta{font-size:12px;color:var(--muted);margin-top:6px}.rating{color:#ffd45a;font-weight:800}.platform{display:inline-block;margin-top:9px;font-size:11px;border:1px solid var(--line);padding:5px 7px;border-radius:7px;color:#cfd2dc}.details{display:flex;gap:7px;margin-top:12px}.details button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:#0d0f15;color:white;cursor:pointer}
+.feature-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:15px}.feature{min-height:240px;border-radius:20px;border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;justify-content:end;overflow:hidden;position:relative}.feature:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,#07080b);z-index:0}.feature>*{z-index:1}.feature.big{min-height:330px;background:linear-gradient(135deg,#3a1d57,#11182d 55%,#0e0e12)}.feature.small1{background:linear-gradient(135deg,#193f4a,#15151d)}.feature.small2{background:linear-gradient(135deg,#56321c,#15151d)}
+.feature h3{font-size:28px;margin:7px 0}.feature p{color:#c6c9d2;max-width:620px}.feature .tag{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#ff8299;font-weight:900}
+.recommend{background:linear-gradient(120deg,#161323,#10141b);border:1px solid var(--line);border-radius:24px;padding:25px}.options{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}.option{border:1px solid var(--line);background:#0d0f15;color:#ddd;border-radius:11px;padding:10px 13px;cursor:pointer}.option.selected{border-color:#9a75ff;background:#241b3b}.recommend-result{margin-top:20px;padding:18px;border-radius:16px;background:#0b0d12;display:none}
+.empty{text-align:center;color:var(--muted);padding:45px}.count{color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var(--muted);font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.open{display:flex}.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#101219;border:1px solid #2c3040;border-radius:22px;padding:25px;position:relative}.close{position:absolute;right:15px;top:15px;border:0;background:#222631;color:white;border-radius:50%;width:36px;height:36px;cursor:pointer}.modal-cover{height:210px;border-radius:16px;margin-bottom:20px;display:flex;align-items:end;padding:20px;background:linear-gradient(135deg,var(--c1),var(--c2));font-size:36px;font-weight:950}.modal p{color:#c5c8d2;line-height:1.65}.modal-info{display:flex;gap:8px;flex-wrap:wrap;color:#bfc2cc;font-size:13px}
+@media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}.hero-art{display:none}.feature-grid{grid-template-columns:1fr 1fr}.feature.big{grid-column:1/-1}}
+@media(max-width:620px){nav{display:none}.nav{justify-content:space-between}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.poster{height:235px}.feature-grid{grid-template-columns:1fr}.feature.big{grid-column:auto}h1{letter-spacing:-2px}.hero{padding-top:45px}.section{padding:30px 0}}
+</style>
+
+<style>
+.api-note{margin:18px 0;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--muted);font-size:12px}
+.api-note b{color:var(--text)} .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#46d39a;margin-right:6px}
+</style>
+</head>
+<body>
+<header><div class="container nav">
+  <div class="logo">Cine<span>Verse</span></div>
+  <nav><a href="#inicio">Início</a><a href="#lancamentos">Lançamentos</a><a href="#ranking">Ranking</a><a href="#lista">Minha lista</a></nav>
+  <div class="actions"><button class="iconbtn" onclick="toggleTheme()" title="Alternar tema">☼</button><button class="iconbtn" onclick="showList()">♡ <span id="favCount">0</span></button><button class="primary" id="loginBtn" onclick="login()">Entrar</button></div>
+</div></header>
+
+<main id="inicio">
+<section class="hero container">
+  <div class="hero-copy">
+    <div class="eyebrow">O seu próximo filme começa aqui</div>
+    <h1>Descubra o que assistir hoje.</h1>
+    <p>Filmes, séries, lançamentos, trailers e recomendações em um só lugar. Encontre sua próxima história sem perder horas procurando.</p>
+    <div class="hero-buttons"><a class="primary" href="#lancamentos" style="text-decoration:none">Explorar lançamentos</a><button class="ghost" onclick="openRandom()">🎲 Surpreenda-me</button></div>
+  </div>
+  <div class="hero-art"><div class="arttitle">TELA<br>FLUX</div></div>
+</section>
+
+<section class="section container" id="lancamentos">
+  <div class="section-head"><div><h2>Lançamentos de setembro</h2><p>Uma seleção atualizada para você acompanhar as estreias.</p></div><span class="count" id="count"></span></div>
+  <div id="apiNote" class="api-note"><span class="live-dot"></span><b>Conectando ao catálogo...</b> — buscando filmes e séries automaticamente.</div><div class="searchbar">
+    <input id="search" placeholder="🔎 Buscar filme ou série..." oninput="render()">
+    <select id="type" onchange="render()"><option value="all">Todos</option><option value="filme">Filmes</option><option value="serie">Séries</option></select>
+    <select id="platform" onchange="render()"><option value="all">Todas as plataformas</option><option>Netflix</option><option>Prime Video</option><option>Disney+</option><option>HBO Max</option><option>Apple TV+</option></select>
+    <select id="genre" onchange="render()"><option value="all">Todos os gêneros</option><option>Ação</option><option>Drama</option><option>Comédia</option><option>Ficção</option><option>Terror</option><option>Romance</option></select>
+  </div>
+  <div class="chips">
+    <button class="chip active" onclick="quickFilter('all',this)">Todos</button><button class="chip" onclick="quickFilter('hoje',this)">🔥 Em destaque</button><button class="chip" onclick="quickFilter('breve',this)">⏳ Próximos</button><button class="chip" onclick="quickFilter('filme',this)">🎬 Filmes</button><button class="chip" onclick="quickFilter('serie',this)">📺 Séries</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section class="section container" id="ranking">
+ <div class="section-head"><div><h2>🔥 Em alta</h2><p>Os títulos que merecem entrar no seu radar.</p></div></div>
+ <div class="feature-grid">
+   <article class="feature big"><span class="tag">Mais aguardado</span><h3>Toy Story 5</h3><p>Uma nova aventura da turma da Pixar que promete misturar nostalgia, humor e uma nova geração de brinquedos.</p><button class="primary" onclick="openById(4)">Ver detalhes</button></article>
+   <article class="feature small1"><span class="tag">Série</span><h3>Stranger Things: Histórias de 85</h3><p>Novos mistérios no universo de Hawkins.</p><button class="ghost" onclick="openById(3)">Detalhes</button></article>
+   <article class="feature small2"><span class="tag">Cinema</span><h3>O Mandaloriano e Grogu</h3><p>Uma aventura galáctica para a telona.</p><button class="ghost" onclick="openById(5)">Detalhes</button></article>
+ </div>
+</section>
+
+<section class="section container" id="lista">
+ <div class="section-head"><div><h2>❤️ Minha lista</h2><p>Salve o que você quer assistir depois.</p></div></div>
+ <div id="listGrid" class="grid"></div><div id="emptyList" class="empty">Sua lista está vazia. Clique em ♡ nos títulos que você quer guardar.</div>
+</section>
+
+<section class="section container">
+ <div class="recommend">
+  <h2>🤖 O que assistir hoje?</h2><p style="color:var(--muted)">Escolha seu clima e eu encontro uma sugestão.</p>
+  <strong>Quero algo...</strong><div class="options" id="mood"><button class="option" data-v="comedia">😄 Divertido</button><button class="option" data-v="terror">😱 Tenso</button><button class="option" data-v="inteligente">🧠 Inteligente</button><button class="option" data-v="emocionante">❤️ Emocionante</button><button class="option" data-v="epico">⚔️ Épico</button></div>
+  <strong>Tenho...</strong><div class="options" id="time"><button class="option" data-v="30">30 min</button><button class="option" data-v="90">1h30</button><button class="option" data-v="120">2h+</button><button class="option" data-v="maratona">Várias horas</button></div>
+  <button class="primary" onclick="recommend()">Encontrar minha próxima história</button><button class="ghost" onclick="requestNotifications()">🔔 Ativar alertas</button>
+  <div id="recommendResult" class="recommend-result"></div>
+ </div>
+</section>
+</main>
+
+<footer><div class="container">© 2026 TelaFlux · Descoberta de filmes e séries · Dados via TMDB · <a href="/admin.html" style="color:inherit">Admin</a>.</div></footer><div class="modal" id="profileModal"><div class="modal-box"><button class="close" onclick="closeProfile()">×</button><h2>👤 Meu perfil</h2><div id="profileContent"></div></div></div>
+
+<div class="modal" id="modal"><div class="modal-box">
+<button class="close" onclick="closeModal()">×</button><div id="modalContent"></div>
+</div></div>
+
+<script>
+const TMDB_API="/api";
+async function loadCatalog(){
+  try{
+    const res=await fetch(TMDB_API+"/discover");
+    if(!res.ok) throw new Error("API indisponível");
+    const payload=await res.json();
+    data.splice(0,data.length,...payload.results.map((x,i)=>({
+      id:x.id, title:x.title||x.name, type:x.media_type==="tv"?"serie":"filme",
+      date:(x.release_date||x.first_air_date||"").split("-").reverse().join("/"),
+      platform:x.platform||"Streaming", genres:x.genres||[], rating:Number(x.vote_average||0).toFixed(1),
+      desc:x.overview||"Sem sinopse disponível.", c1:"#2a2d3a",c2:"#0f1117",
+      tag:x.is_new?"NOVO":"EM DESTAQUE", img:x.poster_path
+    })));
+    render(); updateList();
+    const note=document.getElementById("apiNote"); if(note) note.innerHTML='<span class="live-dot"></span><b>Catálogo ao vivo</b> — dados, notas e pôsteres carregados do TMDB.';
+  }catch(e){
+    const note=document.getElementById("apiNote"); if(note) note.innerHTML='⚠️ <b>Modo demonstração</b> — não foi possível conectar ao catálogo. O site continua funcionando com recomendações locais.';
+    // fallback data
+    data.push(
+      {id:9001,title:"Toy Story 5",type:"filme",date:"23/09/2026",platform:"Disney+",genres:["Comédia","Aventura"],rating:8.8,desc:"Woody, Buzz e companhia retornam para uma nova aventura.",c1:"#1d5b87",c2:"#ef7e2d",tag:"23 SET"},
+      {id:9002,title:"Stranger Things",type:"serie",date:"17/09/2026",platform:"Netflix",genres:["Terror","Ficção"],rating:9.0,desc:"Novas histórias no universo de Hawkins.",c1:"#4b1637",c2:"#11142c",tag:"17 SET"}
+    );
+    render();
+  }
+}
+
+const data=[];
+let favorites=JSON.parse(localStorage.getItem("telaflux-fav")||"[]"), quick="all";
+function render(){
+ const q=document.getElementById("search").value.toLowerCase(),type=document.getElementById("type").value,plat=document.getElementById("platform").value,genre=document.getElementById("genre").value;
+ let arr=data.filter(x=>(!q||x.title.toLowerCase().includes(q))&&(type==="all"||x.type===type)&&(plat==="all"||x.platform===plat)&&(genre==="all"||x.genres.includes(genre)));
+ if(quick==="filme")arr=arr.filter(x=>x.type==="filme"); if(quick==="serie")arr=arr.filter(x=>x.type==="serie");
+ if(quick==="hoje")arr=arr.filter(x=>x.rating>=8.2); if(quick==="breve")arr=arr.filter(x=>!x.tag.includes("DISPONÍVEL"));
+ document.getElementById("count").textContent=`${arr.length} título${arr.length!==1?"s":""}`;
+ document.getElementById("grid").innerHTML=arr.map(card).join("")||'<div class="empty" style="grid-column:1/-1">Nenhum título encontrado.</div>';
+ updateList();
+}
+function card(x){let on=favorites.includes(x.id);return `<article class="card"><div class="poster" style="--c1:${x.c1};--c2:${x.c2}"><span class="badge">${x.tag}</span><button class="fav ${on?"on":""}" onclick="event.stopPropagation();toggleFav(${x.id})">${on?"♥":"♡"}</button><div class="poster-title">${x.title}</div></div><div class="card-body"><div class="title">${x.title}</div><div class="meta">${x.date} · ${x.type==="filme"?"Filme":"Série"} · <span class="rating">★ ${x.rating}</span></div><span class="platform">${x.platform}</span><div class="details"><button onclick="openById(${x.id})">Detalhes</button><button onclick="trailer('${x.title.replaceAll("'","")}')">▶ Trailer</button></div></div></article>`}
+async function toggleFav(id){
+ const x=data.find(a=>a.id===id), sid=localStorage.getItem("telaflux_session");
+ if(sid && x){try{await fetch("/api/watchlist",{method:"POST",headers:{"Content-Type":"application/json","x-telaflux-session":sid},body:JSON.stringify({media_id:Number(id),media_type:x.type==="serie"?"tv":"movie",watchlist:!favorites.includes(id)})})}catch(e){}}
+ favorites=favorites.includes(id)?favorites.filter(v=>v!==id):[...favorites,id];
+ localStorage.setItem("telaflux-fav",JSON.stringify(favorites));document.getElementById("favCount").textContent=favorites.length;render();
+}
+function openRandom(){openById(data[Math.floor(Math.random()*data.length)].id)}
+function toggleTheme(){document.body.classList.toggle("light");if(document.body.classList.contains("light")){document.documentElement.style.setProperty("--bg","#f4f5f8");document.documentElement.style.setProperty("--panel","#fff");document.documentElement.style.setProperty("--panel2","#eef0f5");document.documentElement.style.setProperty("--text","#11131a");document.documentElement.style.setProperty("--muted","#626776")}else{document.documentElement.style.setProperty("--bg","#08090d");document.documentElement.style.setProperty("--panel","#11131a");document.documentElement.style.setProperty("--panel2","#171a23");document.documentElement.style.setProperty("--text","#f5f5f7");document.documentElement.style.setProperty("--muted","#a7abb8")}}
+document.querySelectorAll(".option").forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll(".option").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
+function recommend(){const mood=document.querySelector("#mood .selected")?.dataset.v||"comedia";let arr=data;if(mood==="terror")arr=arr.filter(x=>x.genres.includes("Terror"));if(mood==="comedia")arr=arr.filter(x=>x.genres.includes("Comédia"));if(mood==="epico")arr=arr.filter(x=>x.genres.includes("Ação")||x.genres.includes("Aventura"));if(mood==="emocionante")arr=arr.filter(x=>x.genres.includes("Drama")||x.genres.includes("Romance"));if(mood==="inteligente")arr=arr.filter(x=>x.genres.includes("Drama")||x.genres.includes("Ficção"));const x=(arr.length?arr:data).sort((a,b)=>b.rating-a.rating)[0];const box=document.getElementById("recommendResult");box.style.display="block";box.innerHTML=`<strong>Minha sugestão: ${x.title}</strong><p style="color:var(--muted)">${x.desc}</p><button class="primary" onclick="openById(${x.id})">Ver detalhes</button>`}
+
+async function login(){location.href="/api/auth/start"}
+async function loadProfile(){
+ const sid=localStorage.getItem("telaflux_session"); if(!sid)return;
+ try{
+  const r=await fetch("/api/me",{headers:{"x-telaflux-session":sid}}); if(!r.ok)return;
+  const d=await r.json(),b=document.getElementById("loginBtn"); b.textContent="👤 "+(d.account.username||"Perfil"); b.onclick=()=>openProfile(d.account);
+  const w=await fetch("/api/watchlist",{headers:{"x-telaflux-session":sid}}); if(w.ok){const j=await w.json();favorites=[...(j.movies||[]).map(x=>x.id),...(j.tv||[]).map(x=>x.id)];localStorage.setItem("telaflux-fav",JSON.stringify(favorites));document.getElementById("favCount").textContent=favorites.length;render();}
+ }catch(e){}
+}
+function openProfile(a){document.getElementById("profileContent").innerHTML=`<p><b>${a.name||a.username}</b></p><p style="color:var(--muted)">Sua conta TMDB está conectada e sua watchlist pode ser sincronizada.</p><p>❤️ ${favorites.length} títulos salvos.</p><button class="ghost" onclick="logout()">Sair</button>`;document.getElementById("profileModal").classList.add("open")}
+function closeProfile(){document.getElementById("profileModal").classList.remove("open")}
+async function logout(){const sid=localStorage.getItem("telaflux_session");if(sid)await fetch("/api/logout",{method:"POST",headers:{"x-telaflux-session":sid}});localStorage.removeItem("telaflux_session");location.reload()}
+async function requestNotifications(){if(!("Notification"in window)){alert("Notificações não suportadas.");return}const p=await Notification.requestPermission();if(p==="granted")new Notification("TelaFlux 🔔",{body:"Alertas ativados!"})}
+
+document.getElementById("favCount").textContent=favorites.length;render();loadCatalog();loadProfile();
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+</script>
+</body></html>

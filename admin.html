@@ -1,0 +1,9 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>TelaFlux Admin</title>
+<style>body{font-family:system-ui;background:#090a0f;color:#fff;max-width:900px;margin:auto;padding:30px}input,button{padding:11px;margin:5px;border-radius:8px;border:1px solid #333;background:#151821;color:#fff}button{cursor:pointer}.box{background:#11131a;padding:20px;border-radius:14px;margin:15px 0}li{margin:10px 0}</style></head>
+<body><h1>🎬 TelaFlux Admin</h1><div class="box"><input id="key" type="password" placeholder="ADMIN_KEY"><input id="title" placeholder="Título"><select id="type"><option value="movie">Filme</option><option value="tv">Série</option></select><input id="tmdb" type="number" placeholder="TMDB ID"><button onclick="add()">Adicionar</button></div><div class="box"><h2>Conteúdo manual</h2><ul id="list"></ul></div>
+<script>
+const k=()=>document.getElementById('key').value;
+async function load(){let r=await fetch('/api/admin/content',{headers:{'x-admin-key':k()}});let d=await r.json();document.getElementById('list').innerHTML=(d.items||[]).map(x=>`<li>${x.title} (${x.media_type}) <button onclick="del(${x.id})">Excluir</button></li>`).join('')}
+async function add(){await fetch('/api/admin/content',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':k()},body:JSON.stringify({title:document.getElementById('title').value,media_type:document.getElementById('type').value,tmdb_id:Number(document.getElementById('tmdb').value)||null})});load()}
+async function del(id){await fetch('/api/admin/content/'+id,{method:'DELETE',headers:{'x-admin-key':k()}});load()}
+</script></body></html>
