@@ -112,10 +112,10 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
 </div></div>
 
 <script>
-const TMDB_API="/api";
+const API = "https://telaflux-api.onrender.com/api";
 async function loadCatalog(){
   try{
-    const res=await fetch(TMDB_API+"/discover");
+    const res=await fetch(API+"/discover");
     if(!res.ok) throw new Error("API indisponível");
     const payload=await res.json();
     data.splice(0,data.length,...payload.results.map((x,i)=>({
