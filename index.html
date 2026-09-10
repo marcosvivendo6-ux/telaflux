@@ -163,7 +163,43 @@ async function toggleFav(id){
  favorites=favorites.includes(id)?favorites.filter(v=>v!==id):[...favorites,id];
  localStorage.setItem("telaflux-fav",JSON.stringify(favorites));document.getElementById("favCount").textContent=favorites.length;render();
 }
-function openRandom(){openById(data[Math.floor(Math.random()*data.length)].id)}
+function openById(id){
+ const x=data.find(a=>a.id===id);
+ if(!x)return;
+ document.getElementById("modalContent").innerHTML=`
+   <div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${x.title}</div>
+   <h2>${x.title}</h2>
+   <div class="modal-info">
+     <span>${x.date}</span>
+     <span>· ${x.type==="filme"?"Filme":"Série"}</span>
+     <span>· ⭐ ${x.rating}</span>
+     <span>· ${x.platform}</span>
+   </div>
+   <p>${x.desc}</p>
+   <button class="primary" onclick="trailer('${x.title.replaceAll("'","")}')">▶ Assistir trailer</button>
+ `;
+ document.getElementById("modal").classList.add("open");
+}
+
+function closeModal(){
+ document.getElementById("modal").classList.remove("open");
+}
+
+function trailer(title){
+ window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(title+" trailer"),"_blank");
+}
+
+function quickFilter(value,button){
+ quick=value;
+ document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+ button.classList.add("active");
+ render();
+}
+
+function showList(){
+ document.getElementById("lista").scrollIntoView({behavior:"smooth"});
+}
+  function openRandom(){openById(data[Math.floor(Math.random()*data.length)].id)}
 function toggleTheme(){document.body.classList.toggle("light");if(document.body.classList.contains("light")){document.documentElement.style.setProperty("--bg","#f4f5f8");document.documentElement.style.setProperty("--panel","#fff");document.documentElement.style.setProperty("--panel2","#eef0f5");document.documentElement.style.setProperty("--text","#11131a");document.documentElement.style.setProperty("--muted","#626776")}else{document.documentElement.style.setProperty("--bg","#08090d");document.documentElement.style.setProperty("--panel","#11131a");document.documentElement.style.setProperty("--panel2","#171a23");document.documentElement.style.setProperty("--text","#f5f5f7");document.documentElement.style.setProperty("--muted","#a7abb8")}}
 document.querySelectorAll(".option").forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll(".option").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
 function recommend(){const mood=document.querySelector("#mood .selected")?.dataset.v||"comedia";let arr=data;if(mood==="terror")arr=arr.filter(x=>x.genres.includes("Terror"));if(mood==="comedia")arr=arr.filter(x=>x.genres.includes("Comédia"));if(mood==="epico")arr=arr.filter(x=>x.genres.includes("Ação")||x.genres.includes("Aventura"));if(mood==="emocionante")arr=arr.filter(x=>x.genres.includes("Drama")||x.genres.includes("Romance"));if(mood==="inteligente")arr=arr.filter(x=>x.genres.includes("Drama")||x.genres.includes("Ficção"));const x=(arr.length?arr:data).sort((a,b)=>b.rating-a.rating)[0];const box=document.getElementById("recommendResult");box.style.display="block";box.innerHTML=`<strong>Minha sugestão: ${x.title}</strong><p style="color:var(--muted)">${x.desc}</p><button class="primary" onclick="openById(${x.id})">Ver detalhes</button>`}
