@@ -198,22 +198,52 @@ async function toggleFav(id){
  localStorage.setItem("telaflux-fav",JSON.stringify(favorites));document.getElementById("favCount").textContent=favorites.length;render();
 }
 function openById(id){
- const x=data.find(a=>a.id===id);
- if(!x)return;
- document.getElementById("modalContent").innerHTML=`
-   <div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${x.title}</div>
-   <h2>${x.title}</h2>
-   <div class="modal-info">
-     <span>${x.date}</span>
-     <span>· ${x.type==="filme"?"Filme":"Série"}</span>
-     <span>· ⭐ ${x.rating}</span>
-     <span>· ${x.platform}</span>
-   </div>
-   <p>${x.desc}</p>
-   <button class="primary" onclick="trailer('${x.title.replaceAll("'","")}')">▶ Assistir trailer</button>
- `;
- document.getElementById("modal").classList.add("open");
+  const x=data.find(a=>a.id===id);
+  if(!x)return;
+
+  let poster="";
+  if(x.img){
+    poster=x.img.startsWith("http")
+      ? x.img
+      : "https://image.tmdb.org/t/p/w780"+x.img;
+  }
+
+  document.getElementById("modalContent").innerHTML=`
+    <div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2};${poster?`background-image:url('${poster}')`:""}">
+      <div class="modal-cover-title">${x.title}</div>
+    </div>
+
+    <h2>${x.title}</h2>
+
+    <div class="modal-info">
+      <span>${x.date}</span>
+      <span>${x.type==="film"?"🎬 Filme":"📺 Série"}</span>
+      <span>⭐ ${x.rating}</span>
+      <span>${x.platform}</span>
+    </div>
+
+    <p>${x.desc || "Sinopse não disponível."}</p>
+
+    <button class="primary"
+      onclick="trailer('${x.title.replaceAll("'","")}')">
+      ▶ Assistir trailer
+    </button>
+  `;
+
+  document.getElementById("modal").classList.add("open");
 }
+     
+function openRandom(){
+  if(!data.length)return;
+  const x=data[Math.floor(Math.random()*data.length)];
+  openById(x.id);
+  }     
+   
+   
+   
+ 
+ 
+
 
 function closeModal(){
  document.getElementById("modal").classList.remove("open");
