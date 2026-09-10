@@ -140,7 +140,14 @@ async function loadCatalog(){
 
 const data=[];
 let favorites=JSON.parse(localStorage.getItem("telaflux-fav")||"[]"), quick="all";
-function render(){
+function updateList(){
+ const arr=data.filter(x=>favorites.includes(x.id));
+ const grid=document.getElementById("listGrid");
+ const empty=document.getElementById("emptyList");
+ grid.innerHTML=arr.map(card).join("");
+ empty.style.display=arr.length?"none":"block";
+}
+  function render(){
  const q=document.getElementById("search").value.toLowerCase(),type=document.getElementById("type").value,plat=document.getElementById("platform").value,genre=document.getElementById("genre").value;
  let arr=data.filter(x=>(!q||x.title.toLowerCase().includes(q))&&(type==="all"||x.type===type)&&(plat==="all"||x.platform===plat)&&(genre==="all"||x.genres.includes(genre)));
  if(quick==="filme")arr=arr.filter(x=>x.type==="filme"); if(quick==="serie")arr=arr.filter(x=>x.type==="serie");
