@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 const TMDB_TOKEN = process.env.TMDB_TOKEN;
 const REGION = "BR";
@@ -11,6 +12,7 @@ const PROVIDER_PRIME = 119;
 const PROVIDER_DISNEY = 337;
 const PROVIDER_MAX = 1899;
 const PROVIDER_APPLE = 350;
+
 const COMPANY_DC = 9993;
 const COMPANY_MARVEL = 420;
 
@@ -23,6 +25,13 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/discover", async (req, res) => {
   try {
+    const {
+      platform = "all",
+      company = "all",
+      type = "all",
+      page = 1
+    } = req.query;
+
     if (!TMDB_TOKEN) {
       return res.status(500).json({
         error: "TMDB_TOKEN não configurado"
@@ -34,191 +43,94 @@ app.get("/api/discover", async (req, res) => {
       accept: "application/json"
     };
 
-    const requestedCategory = String(req.query.category || "all").trim();
-    const category = requestedCategory.toLowerCase();
+    const urls = [];
 
-    const providerMap = {
-      netflix: PROVIDER_NETFLIX,
-      "prime video": PROVIDER_PRIME,
-      "disney+": PROVIDER_DISNEY,
-      "hbo max": PROVIDER_MAX,
-      "apple tv+": PROVIDER_APPLE
+    const addUrl = (mediaType, params = "") => {
+      urls.push(
+        `https://api.themoviedb.org/3/discover/${mediaType}?language=pt-BR&region=${REGION}&sort_by=popularity.desc&page=${page}${params}`
+      );
     };
 
-    const providerId = providerMap[category];
+    const providerMap = {
+      Netflix: PROVIDER_NETFLIX,
+      "Prime Video": PROVIDER_PRIME,
+      "Disney+": PROVIDER_DISNEY,
+      "HBO Max": PROVIDER_MAX,
+      "Apple TV+": PROVIDER_APPLE
+    };
 
-    function buildUrl(type) {
-      const params = new URLSearchParams({
-        language: "pt-BR",
-        sort_by: "popularity.desc",
-        page: "1"
-      });
+    const companyMap = {
+      DC: COMPANY_DC,
+      Marvel: COMPANY_MARVEL
+    };
 
-      if (providerId) {
-        params.set("watch_region", REGION);
-        params.set("with_watch_providers", String(providerId));
-      }
+    const provider = providerMap[platform];
+    const companyId = companyMap[company];
 
-      if (category === "dc") {
-        params.set("with_companies", String(COMPANY_DC));
-      }
-
-      if (category === "marvel") {
-        params.set("with_companies", String(COMPANY_MARVEL));
-      }
-
-      if (category === "animes") {
-        params.set("with_genres", "16");
-        params.set("with_original_language", "ja");
-      }
-
-      return `https://api.themoviedb.org/3/discover/${type}?${params.toString()}`;
+    if (type === "movie") {
+      addUrl(
+        "movie",
+        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
+      );
+    } else if (type === "tv") {
+      addUrl(
+        "tv",
+        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
+      );
+    } else {
+      addUrl(
+        "movie",
+        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
+      );
+      addUrl(
+        "tv",
+        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
+      );
     }
 
-    const [moviesResponse, tvResponse] = await Promise.all([
-      fetch(buildUrl("movie"), { headers }),
-      fetch(buildUrl("tv"), { headers })
-    ]);
+    const responses = await Promise.all(
+      urls.map(url =>
+        fetch(url, { headers }).then(r => {
+          if (!r.ok) throw new Error(`TMDB HTTP ${r.status}`);
+          return r.json();
+        })
+      )
+    );
 
-    if (!moviesResponse.ok || !tvResponse.ok) {
-      throw new Error("Erro ao consultar o TMDB");
+    let results = responses.flatMap(data => data.results || []);
+
+    if (companyId) {
+      results = results.filter(item =>
+        (item.production_companies || []).some(
+          companyItem => companyItem.id === companyId
+        )
+      );
     }
 
-    const movies = await moviesResponse.json();
-    const tv = await tvResponse.json();
-
-    const platformLabel =
-      providerId || ["dc", "marvel", "animes"].includes(category)
-        ? requestedCategory
-        : null;
-
-    const results = [
-      ...(movies.results || [])
-        .filter(movie => movie.poster_path)
-        .slice(0, 20)
-        .map(movie => ({
-          id: movie.id,
-          title: movie.title,
-          media_type: "movie",
-          release_date: movie.release_date,
-          platform: platformLabel || "Filmes",
-          genres: [],
-          vote_average: movie.vote_average,
-          overview: movie.overview,
-          poster_path: movie.poster_path,
-          is_new: true
-        })),
-
-      ...(tv.results || [])
-        .filter(show => show.poster_path)
-        .slice(0, 20)
-        .map(show => ({
-          id: show.id,
-          title: show.name,
-          media_type: "tv",
-          first_air_date: show.first_air_date,
-          platform: platformLabel || "Séries",
-          genres: [],
-          vote_average: show.vote_average,
-          overview: show.overview,
-          poster_path: show.poster_path,
-          is_new: true
-        }))
-    ];
+    results = results.map(item => ({
+      id: item.id,
+      title: item.title || item.name,
+      overview: item.overview || "",
+      poster_path: item.poster_path,
+      backdrop_path: item.backdrop_path,
+      vote_average: item.vote_average,
+      release_date: item.release_date || item.first_air_date || "",
+      media_type: item.media_type || (
+        item.title ? "movie" : "tv"
+      )
+    }));
 
     res.json({ results });
   } catch (error) {
     console.error(error);
 
-    res.status(502).json({
-      error: "Falha ao consultar o catálogo"
+    res.status(500).json({
+      error: "Erro ao consultar o catálogo",
+      details: error.message
     });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`TelaFlux API funcionando na porta ${PORT}`);
-});if (category === "netflix") {
-  filter = `&watch_region=${REGION}&with_watch_providers=${PROVIDER_NETFLIX}`;
-}
-
-if (category === "prime") {
-  filter = `&watch_region=${REGION}&with_watch_providers=${PROVIDER_PRIME}`;
-}
-
-if (category === "max") {
-  filter = `&watch_region=${REGION}&with_watch_providers=${PROVIDER_MAX}`;
-}
-
-if (category === "dc") {
-  filter = `&with_companies=${COMPANY_DC}`;
-}
-
-if (category === "marvel") {
-  filter = `&with_companies=${COMPANY_MARVEL}`;
-}
-
-if (category === "anime") {
-  filter = `&with_genres=16&with_original_language=ja`;
-}
-
-const [moviesResponse, tvResponse] = await Promise.all([
-  fetch(
-    `https://api.themoviedb.org/3/discover/movie?language=pt-BR&sort_by=popularity.desc${filter}`,
-    { headers }
-  ),
-  fetch(
-    `https://api.themoviedb.org/3/discover/tv?language=pt-BR&sort_by=popularity.desc${filter}`,
-    { headers }
-  )
-]);
-
-    if (!moviesResponse.ok || !tvResponse.ok) {
-      throw new Error("Erro ao consultar o TMDB");
-    }
-
-    const movies = await moviesResponse.json();
-    const tv = await tvResponse.json();
-
-    const results = [
-      ...(movies.results || []).filter(movie => movie.poster_path).slice(0, 20).map(movie => ({
-        id: movie.id,
-        title: movie.title,
-        media_type: "movie",
-        release_date: movie.release_date,
-        platform: "Filmes",
-        genres: [],
-        vote_average: movie.vote_average,
-        overview: movie.overview,
-        poster_path: movie.poster_path,
-        is_new: true
-      })),
-
-      ...(tv.results || []).filter(show => show.poster_path).slice(0, 20).map(show => ({
-        id: show.id,
-        title: show.name,
-        media_type: "tv",
-        first_air_date: show.first_air_date,
-        platform: "Séries",
-        genres: [],
-        vote_average: show.vote_average,
-        overview: show.overview,
-        poster_path: show.poster_path,
-        is_new: true
-      }))
-    ];
-
-    res.json({ results });
-
-  } catch (error) {
-    console.error(error);
-
-    res.status(502).json({
-      error: "Falha ao consultar o catálogo"
-    });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`TelaFlux API funcionando na porta ${PORT}`);
+  console.log(`TelaFlux API rodando na porta ${PORT}`);
 });
