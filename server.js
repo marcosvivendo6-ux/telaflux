@@ -44,7 +44,7 @@ app.get("/api/discover", async (req, res) => {
     const tv = await tvResponse.json();
 
     const results = [
-      ...(movies.results || []).slice(0, 20).map(movie => ({
+      ...(movies.results || []).filter(movie => movie.poster_path).slice(0, 20).map(movie => ({
         id: movie.id,
         title: movie.title,
         media_type: "movie",
@@ -57,7 +57,7 @@ app.get("/api/discover", async (req, res) => {
         is_new: true
       })),
 
-      ...(tv.results || []).slice(0, 20).map(show => ({
+      ...(tv.results || []).filter(show => show.poster_path).slice(0, 20).map(show => ({
         id: show.id,
         title: show.name,
         media_type: "tv",
