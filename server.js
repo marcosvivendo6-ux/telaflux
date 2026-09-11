@@ -22,7 +22,45 @@ app.use(express.json());
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
+app.get("/api/watch", async (req, res) => {
+  try {
+    const { tmdb_id, type = "movie" } = req.query;
 
+    if (!tmdb_id) {
+      return res.status(400).json({
+        error: "tmdb_id é obrigatório"
+      });
+    }
+
+    if (!TMDB_TOKEN) {
+      return res.status(500).json({
+        error: "TMDB_TOKEN não configurado"
+      });
+    }
+
+    const url =
+      `https://api.themoviedb.org/3/${type}/${tmdb_id}/watch/providers`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${TMDB_TOKEN}`,
+        accept: "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    res.json(data.results?.BR || {});
+  } catch (error) {
+    res.status(500).json({
+      error: "Erro ao buscar onde assistir"
+    });
+  }
+});
 app.get("/api/discover", async (req, res) => {
   try {
     const {
