@@ -20,7 +20,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const TMDB_TOKEN = process.env.TMDB_TOKEN;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
-const APP_URL = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
+const APP_URL = process.env.APP_URL || process.env.API_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 3000}`;
+const FRONTEND_URL = (process.env.FRONTEND_URL || "").replace(/\/+$/, "");
+const FRONTEND_ORIGIN = (()=>{ try { return FRONTEND_URL ? new URL(FRONTEND_URL).origin : ""; } catch { return ""; } })();
+const API_PUBLIC_URL = (process.env.API_URL || process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/+$/, "");
 const sessions = new Map();
 const providerCache = new Map();
 function getSession(req){
@@ -32,8 +35,18 @@ function sessionToken(){
 function providerNames(data){
   const br = data?.results?.BR || data?.results?.["BR"];
   const names = [];
+  const normalize = name => {
+    const n = String(name || "").trim().toLowerCase();
+    if(n === "netflix") return "Netflix";
+    if(n === "amazon prime video" || n === "prime video") return "Prime Video";
+    if(n === "disney plus" || n === "disney+") return "Disney+";
+    if(n === "max" || n === "hbo max") return "HBO Max";
+    if(n === "apple tv" || n === "apple tv+") return "Apple TV+";
+    return String(name || "").trim();
+  };
   for (const p of [...(br?.flatrate||[]), ...(br?.free||[]), ...(br?.ads||[])]) {
-    if (p?.provider_name && !names.includes(p.provider_name)) names.push(p.provider_name);
+    const name = normalize(p?.provider_name);
+    if(name && !names.includes(name)) names.push(name);
   }
   return names;
 }
@@ -51,6 +64,18 @@ async function getProviders(type,id){
   }
 }
 
+app.use((req,res,next)=>{
+  const origin = req.headers.origin;
+  const allowed = !FRONTEND_ORIGIN || origin === FRONTEND_ORIGIN || /^https?:\/\/localhost(?::\d+)?$/.test(origin || "");
+  if(allowed){
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+    res.setHeader("Vary","Origin");
+    res.setHeader("Access-Control-Allow-Headers","Content-Type, Accept, X-Telaflux-Session, X-Cineverse-Session, X-Admin-Key");
+    res.setHeader("Access-Control-Allow-Methods","GET,POST,DELETE,OPTIONS");
+  }
+  if(req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
 app.use(express.json({limit:"100kb"}));
 app.use(express.static(__dirname));
 
@@ -80,7 +105,7 @@ app.get("/api/auth/start", async (req,res)=>{
     if(!TMDB_TOKEN) throw new Error("TMDB_TOKEN não configurado");
     const r=await fetch("https://api.themoviedb.org/3/authentication/token/new",{headers:{Authorization:`Bearer ${TMDB_TOKEN}`}});
     const d=await r.json(); if(!d.success) throw new Error(d.status_message||"Falha");
-    res.redirect(`https://www.themoviedb.org/authenticate/${d.request_token}?redirect_to=${encodeURIComponent(APP_URL+"/api/auth/callback")}`);
+    res.redirect(`https://www.themoviedb.org/authenticate/${d.request_token}?redirect_to=${encodeURIComponent(API_PUBLIC_URL+"/api/auth/callback")}`);
   } catch(e){res.status(500).send(`<h2>Erro de login</h2><p>${e.message}</p>`)}
 });
 app.get("/api/auth/callback", async (req,res)=>{
@@ -90,7 +115,8 @@ app.get("/api/auth/callback", async (req,res)=>{
     const me=await tmdb("account",{session_id:d.session_id});
     const browserToken=sessionToken();
     sessions.set(browserToken,{session_id:d.session_id,account:me});
-    res.send(`<script>localStorage.setItem("telaflux_session","${browserToken}");location.replace("/");</script>`);
+    const target = FRONTEND_URL || API_PUBLIC_URL;
+    res.redirect(`${target}/?telaflux_session=${encodeURIComponent(browserToken)}`);
   }catch(e){res.status(500).send(`<h2>Não foi possível concluir o login</h2><p>${e.message}</p><a href="/">Voltar</a>`)}
 });
 app.get("/api/me",async(req,res)=>{
@@ -128,21 +154,40 @@ app.get("/api/watch",async(req,res)=>{
     const type=String(req.query.type||"movie");
     if(!Number.isInteger(id)||id<=0) return res.status(400).json({error:"tmdb_id inválido"});
     if(type!=="movie" && type!=="tv") return res.status(400).json({error:"type deve ser movie ou tv"});
-    const data=await tmdb(`${type}/${id}/watch/providers`);
-    const br=data?.results?.BR || {};
-    res.json({
-      tmdb_id:id,
-      type,
-      country:"BR",
-      link:br.link||null,
-      providers:{
-        flatrate:br.flatrate||[],
-        free:br.free||[],
-        ads:br.ads||[],
-        rent:br.rent||[],
-        buy:br.buy||[]
-      }
-    });
+
+    // O endpoint de watch providers retorna os dados por país.
+    // Pedimos explicitamente BR e pt-BR para evitar depender do padrão da conta.
+    let data;
+    try {
+      data=await tmdb(`${type}/${id}/watch/providers`,{language:"pt-BR",watch_region:"BR"});
+    } catch(primaryError) {
+      // Compatibilidade: algumas configurações antigas usam TMDB_API_KEY.
+      if(!TMDB_API_KEY) throw primaryError;
+      const u=tmdbUrl(`${type}/${id}/watch/providers`,{language:"pt-BR",watch_region:"BR",api_key:TMDB_API_KEY});
+      const r=await fetch(u);
+      if(!r.ok) throw primaryError;
+      data=await r.json();
+    }
+    const br=data?.results?.BR || data?.results?.["BR"] || {};
+    const groups={
+      flatrate:Array.isArray(br.flatrate)?br.flatrate:[],
+      free:Array.isArray(br.free)?br.free:[],
+      ads:Array.isArray(br.ads)?br.ads:[],
+      rent:Array.isArray(br.rent)?br.rent:[],
+      buy:Array.isArray(br.buy)?br.buy:[]
+    };
+    const seen=new Set();
+    const providers={};
+    for(const [kind,list] of Object.entries(groups)){
+      providers[kind]=list.filter(p=>{
+        const key=String(p?.provider_id||p?.provider_name||"");
+        if(!key||seen.has(key)) return false;
+        seen.add(key); return true;
+      });
+    }
+    const all=[...providers.flatrate,...providers.free,...providers.ads,...providers.rent,...providers.buy];
+    res.json({tmdb_id:id,type,country:"BR",link:br.link||null,providers,
+      names:all.map(p=>p.provider_name).filter(Boolean)});
   }catch(e){res.status(500).json({error:e.message})}
 });
 
