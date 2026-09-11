@@ -183,7 +183,17 @@ app.get("/api/watch",async(req,res)=>{
         const key=String(p?.provider_id||p?.provider_name||"");
         if(!key||seen.has(key)) return false;
         seen.add(key); return true;
-      });
+      }).map(p=>({
+        ...p,
+        // Preparado para futuras fontes de idiomas (ex.: JustWatch).
+        // Nunca inferimos dublado/legendado a partir do idioma original.
+        language_info:{
+          audio_languages:[],
+          subtitle_languages:[],
+          source:null,
+          confidence:"unknown"
+        }
+      }));
     }
     const all=[...providers.flatrate,...providers.free,...providers.ads,...providers.rent,...providers.buy];
     res.json({tmdb_id:id,type,country:"BR",link:br.link||null,providers,
@@ -246,8 +256,8 @@ app.get("/api/discover", async (req,res)=>{
       sources.push({type:"tv",params:{language:"pt-BR",watch_region:"BR",with_watch_providers:String(id),with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1},providers:[name],categories:[]});
     }
 
-    sources.push({type:"movie",params:{language:"pt-BR",region:"BR",with_genres:"16",sort_by:"popularity.desc",page:1},providers:[],categories:["Anime"]});
-    sources.push({type:"tv",params:{language:"pt-BR",with_genres:"16",sort_by:"popularity.desc",page:1},providers:[],categories:["Anime"]});
+    sources.push({type:"movie",params:{language:"pt-BR",region:"BR",with_genres:"16",with_original_language:"ja",sort_by:"popularity.desc",page:1},providers:[],categories:["Anime"]});
+    sources.push({type:"tv",params:{language:"pt-BR",with_genres:"16",with_original_language:"ja",sort_by:"popularity.desc",page:1},providers:[],categories:["Anime"]});
     sources.push({type:"movie",params:{language:"pt-BR",region:"BR",with_companies:"429|9993",sort_by:"popularity.desc",page:1},providers:[],categories:["DC"]});
     sources.push({type:"tv",params:{language:"pt-BR",with_companies:"429|9993",sort_by:"popularity.desc",page:1},providers:[],categories:["DC"]});
 
@@ -291,8 +301,7 @@ app.get("/api/discover", async (req,res)=>{
       const providers = x.providers?.length ? x.providers : await getProviders(x.media_type,x.id);
       const categories = [...new Set([
         ...(x.categories||[]),
-        ...((x.genre_ids||[]).includes(16) ? ["Anime"] : []),
-        ...((x.production_companies||[]).some(c=>[429,9993].includes(Number(c.id))) ? ["DC"] : [])
+                ...((x.production_companies||[]).some(c=>[429,9993].includes(Number(c.id))) ? ["DC"] : [])
       ])];
       return {
         ...x,
@@ -314,7 +323,7 @@ app.get("/api/discover", async (req,res)=>{
         const type=item.media_type==="tv"?"tv":"movie";
         const d=await tmdb(`${type}/${item.tmdb_id}`,{language:"pt-BR"});
         const providers=await getProviders(type,item.tmdb_id);
-        const categories=(d.genres||[]).some(g=>Number(g.id)===16)?["Anime"]:[];
+        const categories=[];
         results.push({...d,id:Number(d.id),media_type:type,genres:(d.genres||[]).map(g=>g.name).filter(Boolean),categories,providers,platform:providers[0]||"Streaming",manual:true});
       } catch(e) { console.warn("manual content:", item.id, e.message); }
     }
