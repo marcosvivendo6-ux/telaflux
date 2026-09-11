@@ -132,16 +132,37 @@ if (type === "movie") {
   addUrl("tv", params);
 }
 
-    const responses = await Promise.all(
-      urls.map(url =>
-        fetch(url, { headers }).then(r => {
-          if (!r.ok) throw new Error(`TMDB HTTP ${r.status}`);
-          return r.json();
-        })
-      )
-    );
+    const responses = await Promise.allSettled(
+  urls.map(async url => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
 
-    let results = responses.flatMap(data => data.results || []);
+    try {
+      const response = await fetch(url, {
+        headers,
+        signal: controller.signal
+      });
+
+      if (!response.ok) {
+        throw new Error(`TMDB HTTP ${response.status}`);
+      }
+
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  })
+);
+
+const validResponses = responses
+  .filter(r => r.status === "fulfilled")
+  .map(r => r.value);
+
+if (!validResponses.length) {
+  throw new Error("TMDB não respondeu");
+}
+
+    let results = validResponses.flatMap(data => data.results || []);
 
     
 
