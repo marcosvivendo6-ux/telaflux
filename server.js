@@ -1,195 +1,262 @@
-import express from "express";
-import cors from "cors";
-
+require("dotenv").config();
+const express = require("express");
+const crypto = require("crypto");
+const Database = require("better-sqlite3");
+const path = require("path");
+const fs = require("fs");
+const dbPath = process.env.DB_PATH || path.join(__dirname, "data", "telaflux.db");
+fs.mkdirSync(path.dirname(dbPath), {recursive:true});
+const db = new Database(dbPath);
+db.exec(`CREATE TABLE IF NOT EXISTS content (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ tmdb_id INTEGER,
+ media_type TEXT NOT NULL,
+ title TEXT NOT NULL,
+ featured INTEGER DEFAULT 0,
+ published INTEGER DEFAULT 1,
+ created_at TEXT DEFAULT CURRENT_TIMESTAMP
+)`);
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 const TMDB_TOKEN = process.env.TMDB_TOKEN;
-const REGION = "BR";
-
-const PROVIDER_NETFLIX = 8;
-const PROVIDER_PRIME = 119;
-const PROVIDER_DISNEY = 337;
-const PROVIDER_MAX = 1899;
-const PROVIDER_APPLE = 350;
-
-const COMPANY_DC = 9993;
-const COMPANY_MARVEL = 420;
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/api/health", (req, res) => {
-  res.json({ ok: true });
-});
-app.get("/api/watch", async (req, res) => {
-  try {
-    const { tmdb_id, type = "movie" } = req.query;
-
-    if (!tmdb_id) {
-      return res.status(400).json({
-        error: "tmdb_id é obrigatório"
-      });
-    }
-
-    if (!TMDB_TOKEN) {
-      return res.status(500).json({
-        error: "TMDB_TOKEN não configurado"
-      });
-    }
-
-    const url =
-      `https://api.themoviedb.org/3/${type}/${tmdb_id}/watch/providers`;
-
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${TMDB_TOKEN}`,
-        accept: "application/json"
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return res.status(response.status).json(data);
-    }
-
-    res.json(data.results?.BR || {});
-  } catch (error) {
-    res.status(500).json({
-      error: "Erro ao buscar onde assistir"
-    });
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
+const APP_URL = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
+const sessions = new Map();
+const providerCache = new Map();
+function getSession(req){
+  return sessions.get(req.headers["x-telaflux-session"] || req.headers["x-cineverse-session"]);
+}
+function sessionToken(){
+  return crypto.randomBytes(32).toString("hex");
+}
+function providerNames(data){
+  const br = data?.results?.BR || data?.results?.["BR"];
+  const names = [];
+  for (const p of [...(br?.flatrate||[]), ...(br?.free||[]), ...(br?.ads||[])]) {
+    if (p?.provider_name && !names.includes(p.provider_name)) names.push(p.provider_name);
   }
-});
-app.get("/api/discover", async (req, res) => {
+  return names;
+}
+async function getProviders(type,id){
+  const key = `${type}:${id}`;
+  const cached = providerCache.get(key);
+  if(cached && cached.expires > Date.now()) return cached.names;
   try {
-    const {
-      platform = "all",
-      company = "all",
-      type = "all",
-      page = 1
-    } = req.query;
-
-    if (!TMDB_TOKEN) {
-      return res.status(500).json({
-        error: "TMDB_TOKEN não configurado"
-      });
-    }
-
-    const headers = {
-      Authorization: `Bearer ${TMDB_TOKEN}`,
-      accept: "application/json"
-    };
-
-    const urls = [];
-
-    const addUrl = (mediaType, params = "") => {
-      urls.push(
-        `https://api.themoviedb.org/3/discover/${mediaType}?language=pt-BR&region=${REGION}&sort_by=popularity.desc&page=${page}${params}`
-      );
-    };
-
-    const providerMap = {
-      Netflix: PROVIDER_NETFLIX,
-      "Prime Video": PROVIDER_PRIME,
-      "Disney+": PROVIDER_DISNEY,
-      "HBO Max": PROVIDER_MAX,
-      "Apple TV+": PROVIDER_APPLE
-    };
-
-    const companyMap = {
-      DC: COMPANY_DC,
-      Marvel: COMPANY_MARVEL
-    };
-
-    const provider = providerMap[platform];
-    const companyId = companyMap[platform];
-
-   const extraParams = [];
-
-if (provider) {
-  extraParams.push(
-    `&with_watch_providers=${provider}&watch_region=${REGION}`
-  );
+    const d = await tmdb(`${type}/${id}/watch/providers`);
+    const names = providerNames(d);
+    providerCache.set(key,{names,expires:Date.now()+10*60*1000});
+    return names;
+  } catch(e) {
+    return [];
+  }
 }
 
-if (companyId) {
-  extraParams.push(`&with_companies=${companyId}`);
+app.use(express.json({limit:"100kb"}));
+app.use(express.static(__dirname));
+
+function tmdbUrl(endpoint, params={}) {
+  const qs = new URLSearchParams(params).toString();
+  return `https://api.themoviedb.org/3/${endpoint}${qs ? "?" + qs : ""}`;
 }
 
-if (platform === "Animes") {
-  extraParams.push("&with_genres=16&with_original_language=ja");
+async function tmdb(endpoint, params={}) {
+  if (!TMDB_TOKEN) throw new Error("TMDB_TOKEN não configurado");
+  const r = await fetch(tmdbUrl(endpoint, params), {
+    headers: { Authorization: `Bearer ${TMDB_TOKEN}`, accept: "application/json" }
+  });
+  if (!r.ok) throw new Error(`TMDB ${r.status}`);
+  return r.json();
 }
 
-const params = extraParams.join("");
+const genreNames = {
+  28:"Ação",12:"Aventura",16:"Animação",35:"Comédia",80:"Crime",
+ 99:"Documentário",18:"Drama",14:"Fantasia",27:"Terror",10749:"Romance",
+878:"Ficção",53:"Suspense",10751:"Família",9648:"Mistério"
+};
 
-if (type === "movie") {
-  addUrl("movie", params);
-} else if (type === "tv") {
-  addUrl("tv", params);
-} else {
-  addUrl("movie", params);
-  addUrl("tv", params);
-}
 
-    const responses = await Promise.allSettled(
-  urls.map(async url => {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10000);
+app.get("/api/auth/start", async (req,res)=>{
+  try {
+    if(!TMDB_TOKEN) throw new Error("TMDB_TOKEN não configurado");
+    const r=await fetch("https://api.themoviedb.org/3/authentication/token/new",{headers:{Authorization:`Bearer ${TMDB_TOKEN}`}});
+    const d=await r.json(); if(!d.success) throw new Error(d.status_message||"Falha");
+    res.redirect(`https://www.themoviedb.org/authenticate/${d.request_token}?redirect_to=${encodeURIComponent(APP_URL+"/api/auth/callback")}`);
+  } catch(e){res.status(500).send(`<h2>Erro de login</h2><p>${e.message}</p>`)}
+});
+app.get("/api/auth/callback", async (req,res)=>{
+  try{
+    const r=await fetch("https://api.themoviedb.org/3/authentication/session/new",{method:"POST",headers:{Authorization:`Bearer ${TMDB_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({request_token:req.query.request_token})});
+    const d=await r.json(); if(!d.success) throw new Error(d.status_message||"Autenticação recusada");
+    const me=await tmdb("account",{session_id:d.session_id});
+    const browserToken=sessionToken();
+    sessions.set(browserToken,{session_id:d.session_id,account:me});
+    res.send(`<script>localStorage.setItem("telaflux_session","${browserToken}");location.replace("/");</script>`);
+  }catch(e){res.status(500).send(`<h2>Não foi possível concluir o login</h2><p>${e.message}</p><a href="/">Voltar</a>`)}
+});
+app.get("/api/me",async(req,res)=>{
+ const s=getSession(req); if(!s)return res.status(401).json({authenticated:false});
+ res.json({authenticated:true,account:s.account});
+});
+app.post("/api/logout",(req,res)=>{const token=req.headers["x-telaflux-session"]||req.headers["x-cineverse-session"];sessions.delete(token);res.json({ok:true})});
+app.get("/api/watchlist",async(req,res)=>{
+ const s=getSession(req); if(!s)return res.status(401).json({error:"login_required"});
+ try{
+  const [m,t]=await Promise.all([
+   tmdb(`account/${s.account.id}/watchlist/movies`,{session_id:s.session_id,language:"pt-BR",sort_by:"created_at.desc"}),
+   tmdb(`account/${s.account.id}/watchlist/tv`,{session_id:s.session_id,language:"pt-BR",sort_by:"created_at.desc"})
+  ]);
+  res.json({movies:m.results||[],tv:t.results||[]});
+ }catch(e){res.status(500).json({error:e.message})}
+});
+app.post("/api/watchlist",async(req,res)=>{
+ const s=getSession(req); if(!s)return res.status(401).json({error:"login_required"});
+ try{
+  const {media_id,media_type,watchlist}=req.body||{};
+  if(!Number.isInteger(Number(media_id)) || !["movie","tv"].includes(media_type) || typeof watchlist!=="boolean")
+    return res.status(400).json({error:"media_id, media_type e watchlist inválidos"});
+  const r=await fetch(`https://api.themoviedb.org/3/account/${s.account.id}/watchlist?session_id=${encodeURIComponent(s.session_id)}`,{
+   method:"POST",headers:{Authorization:`Bearer ${TMDB_TOKEN}`,"Content-Type":"application/json"},
+   body:JSON.stringify(req.body)
+  }); res.status(r.status).json(await r.json());
+ }catch(e){res.status(500).json({error:e.message})}
+});
+app.get("/api/health",(req,res)=>res.json({ok:true}));
 
-    try {
-      const response = await fetch(url, {
-        headers,
-        signal: controller.signal
-      });
-
-      if (!response.ok) {
-        throw new Error(`TMDB HTTP ${response.status}`);
+app.get("/api/watch",async(req,res)=>{
+  try{
+    const id=Number(req.query.tmdb_id);
+    const type=String(req.query.type||"movie");
+    if(!Number.isInteger(id)||id<=0) return res.status(400).json({error:"tmdb_id inválido"});
+    if(type!=="movie" && type!=="tv") return res.status(400).json({error:"type deve ser movie ou tv"});
+    const data=await tmdb(`${type}/${id}/watch/providers`);
+    const br=data?.results?.BR || {};
+    res.json({
+      tmdb_id:id,
+      type,
+      country:"BR",
+      link:br.link||null,
+      providers:{
+        flatrate:br.flatrate||[],
+        free:br.free||[],
+        ads:br.ads||[],
+        rent:br.rent||[],
+        buy:br.buy||[]
       }
+    });
+  }catch(e){res.status(500).json({error:e.message})}
+});
 
-      return await response.json();
-    } finally {
-      clearTimeout(timer);
-    }
-  })
-);
+app.get("/api/title/:type/:id",async(req,res)=>{
+ try{
+  const ep=req.params.type==="tv"?"tv":req.params.type==="movie"?"movie":null;
+  if(!ep || !/^\d+$/.test(req.params.id)) return res.status(400).json({error:"type ou id inválido"});
+  const [detail,credits,videos]=await Promise.all([
+   tmdb(`${ep}/${req.params.id}`,{language:"pt-BR"}),tmdb(`${ep}/${req.params.id}/credits`,{language:"pt-BR"}),tmdb(`${ep}/${req.params.id}/videos`,{language:"pt-BR"})
+  ]);
+  res.json({detail,credits,videos});
+ }catch(e){res.status(500).json({error:e.message})}
+});
 
-const validResponses = responses
-  .filter(r => r.status === "fulfilled")
-  .map(r => r.value);
+app.get("/api/admin/content", (req,res)=>{
+  const key=req.headers["x-admin-key"];
+  if(!process.env.ADMIN_KEY || key!==process.env.ADMIN_KEY) return res.status(401).json({error:"unauthorized"});
+  res.json({items:db.prepare("SELECT * FROM content ORDER BY created_at DESC").all()});
+});
+app.post("/api/admin/content", (req,res)=>{
+  const key=req.headers["x-admin-key"];
+  if(!process.env.ADMIN_KEY || key!==process.env.ADMIN_KEY) return res.status(401).json({error:"unauthorized"});
+  const {tmdb_id,media_type,title,featured=0,published=1}=req.body||{};
+  if(!title || typeof title!=="string" || title.trim().length>200 || !["movie","tv"].includes(media_type))
+    return res.status(400).json({error:"title e media_type são obrigatórios e válidos"});
+  if(tmdb_id!=null && (!Number.isInteger(Number(tmdb_id)) || Number(tmdb_id)<=0))
+    return res.status(400).json({error:"tmdb_id inválido"});
+  const r=db.prepare("INSERT INTO content(tmdb_id,media_type,title,featured,published) VALUES(?,?,?,?,?)")
+    .run(tmdb_id==null?null:Number(tmdb_id),media_type,title.trim(),featured?1:0,published?1:0);
+  res.json({id:r.lastInsertRowid});
+});
+app.delete("/api/admin/content/:id",(req,res)=>{
+  const key=req.headers["x-admin-key"];
+  if(!process.env.ADMIN_KEY || key!==process.env.ADMIN_KEY) return res.status(401).json({error:"unauthorized"});
+  db.prepare("DELETE FROM content WHERE id=?").run(req.params.id); res.json({ok:true});
+});
 
-if (!validResponses.length) {
-  throw new Error("TMDB não respondeu");
-}
+app.get("/api/discover", async (req,res)=>{
+  try {
+    const today = new Date().toISOString().slice(0,10);
+    const [movies,tv] = await Promise.all([
+      tmdb("discover/movie", {
+        language:"pt-BR", region:"BR", sort_by:"popularity.desc",
+        "primary_release_date.lte": today,
+        "primary_release_date.gte": new Date(Date.now()-1000*60*60*24*120).toISOString().slice(0,10),
+        page:1
+      }),
+      tmdb("discover/tv", {
+        language:"pt-BR", sort_by:"popularity.desc",
+        "first_air_date.lte": today,
+        page:1
+      })
+    ]);
 
-    let results = validResponses.flatMap(data => data.results || []);
+    const raw = [
+      ...(movies.results||[]).slice(0,18).map(x=>({...x,media_type:"movie"})),
+      ...(tv.results||[]).slice(0,18).map(x=>({...x,media_type:"tv"}))
+    ].sort((a,b)=>(b.popularity||0)-(a.popularity||0)).slice(0,30);
 
-    
-
-    results = results.map(item => ({
-      id: item.id,
-      title: item.title || item.name,
-      overview: item.overview || "",
-      poster_path: item.poster_path,
-      backdrop_path: item.backdrop_path,
-      vote_average: item.vote_average,
-      release_date: item.release_date || item.first_air_date || "",
-      media_type: item.media_type || (
-        item.title ? "movie" : "tv"
-      )
+    const results = await Promise.all(raw.map(async x=>{
+      const providers=await getProviders(x.media_type,x.id);
+      return {
+        ...x,
+        genres:(x.genre_ids||[]).map(id=>genreNames[id]).filter(Boolean),
+        is_new:true,
+        providers,
+        platform:providers[0]||"Streaming"
+      };
     }));
 
-    res.json({ results });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Erro ao consultar o catálogo",
-      details: error.message
-    });
+    const manual = db.prepare("SELECT * FROM content WHERE published=1 ORDER BY featured DESC, created_at DESC").all();
+    for (const item of manual) {
+      if (!item.tmdb_id) {
+        results.push({
+          id: Number(item.id) * -1,
+          title: item.title,
+          media_type: item.media_type,
+          genres: [],
+          providers: [],
+          platform: "TelaFlux",
+          is_new: false,
+          manual: true,
+          overview: "Título adicionado manualmente pelo TelaFlux.",
+          vote_average: 0,
+          poster_path: null
+        });
+        continue;
+      }
+      try {
+        const type=item.media_type==="tv"?"tv":"movie";
+        const d=await tmdb(`${type}/${item.tmdb_id}`,{language:"pt-BR"});
+        const providers=await getProviders(type,item.tmdb_id);
+        results.push({
+          ...d,
+          id:Number(d.id),
+          media_type:type,
+          genres:(d.genres||[]).map(g=>g.name).filter(Boolean),
+          providers,
+          platform:providers[0]||"Streaming",
+          manual:true
+        });
+      } catch(e) {
+        console.warn("manual content:", item.id, e.message);
+      }
+    }
+    res.json({results});
+  } catch(e) {
+    console.error("discover:",e);
+    res.status(500).json({error:e.message});
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`TelaFlux API rodando na porta ${PORT}`);
+app.get("/{*splat}",(req,res)=>{
+  if(req.path.startsWith("/api/")) return res.status(404).json({error:"not_found"});
+  res.sendFile(path.join(__dirname,"index.html"));
 });
+app.listen(PORT,()=>console.log(`TelaFlux em http://localhost:${PORT}`));
