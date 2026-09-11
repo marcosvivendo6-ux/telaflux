@@ -40,7 +40,7 @@ async function loadCatalog(){
   const selected=document.getElementById("platform").value;
   const note=document.getElementById("apiNote");
   try{
-    const url=selected==="all"?API+"/discover":API+"/discover?category="+encodeURIComponent(selected);
+    const url=selected==="all"?API+"/discover":API+"/discover?platform="+encodeURIComponent(selected);   
     const res=await fetch(url);
     if(!res.ok)throw new Error("API indisponível");
     const payload=await res.json();
