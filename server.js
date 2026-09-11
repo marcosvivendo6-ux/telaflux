@@ -295,10 +295,11 @@ app.get("/api/discover", async (req,res)=>{
       .slice(0,60);
 
     const results = await Promise.all(raw.map(async x=>{
+      // Providers reais por título: sempre consultados no TMDB para manter filtros e etiquetas consistentes.
       // Para itens do catálogo geral, buscamos os provedores reais. Itens que já
       // vieram de uma plataforma específica carregam essa informação diretamente,
       // evitando dezenas de chamadas extras ao TMDB.
-      const providers = x.providers?.length ? x.providers : await getProviders(x.media_type,x.id);
+      const providers = await getProviders(x.media_type,x.id);
       const categories = [...new Set([
         ...(x.categories||[]),
                 ...((x.production_companies||[]).some(c=>[429,9993].includes(Number(c.id))) ? ["DC"] : [])
