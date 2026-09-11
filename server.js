@@ -228,30 +228,76 @@ app.delete("/api/admin/content/:id",(req,res)=>{
 app.get("/api/discover", async (req,res)=>{
   try {
     const today = new Date().toISOString().slice(0,10);
-    const [movies,tv] = await Promise.all([
-      tmdb("discover/movie", {
-        language:"pt-BR", region:"BR", sort_by:"popularity.desc",
-        "primary_release_date.lte": today,
-        "primary_release_date.gte": new Date(Date.now()-1000*60*60*24*120).toISOString().slice(0,10),
-        page:1
-      }),
-      tmdb("discover/tv", {
-        language:"pt-BR", sort_by:"popularity.desc",
-        "first_air_date.lte": today,
-        page:1
-      })
-    ]);
+    const minDate = new Date(Date.now()-1000*60*60*24*120).toISOString().slice(0,10);
 
-    const raw = [
-      ...(movies.results||[]).slice(0,18).map(x=>({...x,media_type:"movie"})),
-      ...(tv.results||[]).slice(0,18).map(x=>({...x,media_type:"tv"}))
-    ].sort((a,b)=>(b.popularity||0)-(a.popularity||0)).slice(0,30);
+    // Montamos um catálogo equilibrado: catálogo geral + cada plataforma + Anime + DC.
+    // Assim os filtros não dependem de os poucos 30 primeiros resultados do TMDB
+    // conterem títulos de uma categoria específica.
+    const sources = [
+      {type:"movie", params:{language:"pt-BR",region:"BR",sort_by:"popularity.desc","primary_release_date.lte":today,"primary_release_date.gte":minDate,page:1}, providers:[], categories:[]},
+      {type:"tv", params:{language:"pt-BR",sort_by:"popularity.desc","first_air_date.lte":today,page:1}, providers:[], categories:[]}
+    ];
+
+    const platformProviders = [
+      ["Netflix",8], ["Prime Video",119], ["Disney+",337], ["HBO Max",1899], ["Apple TV+",350]
+    ];
+    for (const [name,id] of platformProviders) {
+      sources.push({type:"movie",params:{language:"pt-BR",region:"BR",watch_region:"BR",with_watch_providers:String(id),with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1},providers:[name],categories:[]});
+      sources.push({type:"tv",params:{language:"pt-BR",watch_region:"BR",with_watch_providers:String(id),with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1},providers:[name],categories:[]});
+    }
+
+    sources.push({type:"movie",params:{language:"pt-BR",region:"BR",with_genres:"16",sort_by:"popularity.desc",page:1},providers:[],categories:["Anime"]});
+    sources.push({type:"tv",params:{language:"pt-BR",with_genres:"16",sort_by:"popularity.desc",page:1},providers:[],categories:["Anime"]});
+    sources.push({type:"movie",params:{language:"pt-BR",region:"BR",with_companies:"429|9993",sort_by:"popularity.desc",page:1},providers:[],categories:["DC"]});
+    sources.push({type:"tv",params:{language:"pt-BR",with_companies:"429|9993",sort_by:"popularity.desc",page:1},providers:[],categories:["DC"]});
+
+    const responses = await Promise.all(sources.map(async source=>{
+      try {
+        const d = await tmdb(source.type === "tv" ? "discover/tv" : "discover/movie", source.params);
+        return {source, results:Array.isArray(d.results)?d.results:[]};
+      } catch(e) {
+        console.warn("discover source:", source.type, e.message);
+        return {source, results:[]};
+      }
+    }));
+
+    const merged = new Map();
+    for (const {source,results} of responses) {
+      for (const item of results.slice(0,10)) {
+        const key = `${source.type}:${item.id}`;
+        const prev = merged.get(key);
+        if (prev) {
+          prev.providers = [...new Set([...(prev.providers||[]), ...source.providers])];
+          prev.categories = [...new Set([...(prev.categories||[]), ...source.categories])];
+        } else {
+          merged.set(key, {
+            ...item,
+            media_type:source.type,
+            providers:[...source.providers],
+            categories:[...source.categories]
+          });
+        }
+      }
+    }
+
+    let raw = [...merged.values()]
+      .sort((a,b)=>(b.popularity||0)-(a.popularity||0))
+      .slice(0,60);
 
     const results = await Promise.all(raw.map(async x=>{
-      const providers=await getProviders(x.media_type,x.id);
+      // Para itens do catálogo geral, buscamos os provedores reais. Itens que já
+      // vieram de uma plataforma específica carregam essa informação diretamente,
+      // evitando dezenas de chamadas extras ao TMDB.
+      const providers = x.providers?.length ? x.providers : await getProviders(x.media_type,x.id);
+      const categories = [...new Set([
+        ...(x.categories||[]),
+        ...((x.genre_ids||[]).includes(16) ? ["Anime"] : []),
+        ...((x.production_companies||[]).some(c=>[429,9993].includes(Number(c.id))) ? ["DC"] : [])
+      ])];
       return {
         ...x,
         genres:(x.genre_ids||[]).map(id=>genreNames[id]).filter(Boolean),
+        categories,
         is_new:true,
         providers,
         platform:providers[0]||"Streaming"
@@ -261,37 +307,16 @@ app.get("/api/discover", async (req,res)=>{
     const manual = db.prepare("SELECT * FROM content WHERE published=1 ORDER BY featured DESC, created_at DESC").all();
     for (const item of manual) {
       if (!item.tmdb_id) {
-        results.push({
-          id: Number(item.id) * -1,
-          title: item.title,
-          media_type: item.media_type,
-          genres: [],
-          providers: [],
-          platform: "TelaFlux",
-          is_new: false,
-          manual: true,
-          overview: "Título adicionado manualmente pelo TelaFlux.",
-          vote_average: 0,
-          poster_path: null
-        });
+        results.push({id:Number(item.id)*-1,title:item.title,media_type:item.media_type,genres:[],categories:[],providers:[],platform:"TelaFlux",is_new:false,manual:true,overview:"Título adicionado manualmente pelo TelaFlux.",vote_average:0,poster_path:null});
         continue;
       }
       try {
         const type=item.media_type==="tv"?"tv":"movie";
         const d=await tmdb(`${type}/${item.tmdb_id}`,{language:"pt-BR"});
         const providers=await getProviders(type,item.tmdb_id);
-        results.push({
-          ...d,
-          id:Number(d.id),
-          media_type:type,
-          genres:(d.genres||[]).map(g=>g.name).filter(Boolean),
-          providers,
-          platform:providers[0]||"Streaming",
-          manual:true
-        });
-      } catch(e) {
-        console.warn("manual content:", item.id, e.message);
-      }
+        const categories=(d.genres||[]).some(g=>Number(g.id)===16)?["Anime"]:[];
+        results.push({...d,id:Number(d.id),media_type:type,genres:(d.genres||[]).map(g=>g.name).filter(Boolean),categories,providers,platform:providers[0]||"Streaming",manual:true});
+      } catch(e) { console.warn("manual content:", item.id, e.message); }
     }
     res.json({results});
   } catch(e) {
@@ -299,7 +324,6 @@ app.get("/api/discover", async (req,res)=>{
     res.status(500).json({error:e.message});
   }
 });
-
 app.get("/{*splat}",(req,res)=>{
   if(req.path.startsWith("/api/")) return res.status(404).json({error:"not_found"});
   res.sendFile(path.join(__dirname,"index.html"));
