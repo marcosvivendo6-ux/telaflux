@@ -65,28 +65,34 @@ app.get("/api/discover", async (req, res) => {
     };
 
     const provider = providerMap[platform];
-    const companyId = companyMap[company];
+    const companyId = companyMap[platform];
 
-    if (type === "movie") {
-      addUrl(
-        "movie",
-        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
-      );
-    } else if (type === "tv") {
-      addUrl(
-        "tv",
-        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
-      );
-    } else {
-      addUrl(
-        "movie",
-        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
-      );
-      addUrl(
-        "tv",
-        provider ? `&with_watch_providers=${provider}&watch_region=${REGION}` : ""
-      );
-    }
+   const extraParams = [];
+
+if (provider) {
+  extraParams.push(
+    `&with_watch_providers=${provider}&watch_region=${REGION}`
+  );
+}
+
+if (companyId) {
+  extraParams.push(`&with_companies=${companyId}`);
+}
+
+if (platform === "Animes") {
+  extraParams.push("&with_genres=16&with_original_language=ja");
+}
+
+const params = extraParams.join("");
+
+if (type === "movie") {
+  addUrl("movie", params);
+} else if (type === "tv") {
+  addUrl("tv", params);
+} else {
+  addUrl("movie", params);
+  addUrl("tv", params);
+}
 
     const responses = await Promise.all(
       urls.map(url =>
@@ -99,13 +105,7 @@ app.get("/api/discover", async (req, res) => {
 
     let results = responses.flatMap(data => data.results || []);
 
-    if (companyId) {
-      results = results.filter(item =>
-        (item.production_companies || []).some(
-          companyItem => companyItem.id === companyId
-        )
-      );
-    }
+    
 
     results = results.map(item => ({
       id: item.id,
