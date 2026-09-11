@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b0b10">
 <meta name="description" content="TelaFlux: descubra lançamentos, filmes, séries, trailers e recomendações em um só lugar.">
+<meta name="telaflux-build" content="2026-09-11-render-fix-v2">
 <title>TelaFlux — Filmes, Séries e Lançamentos</title>
 <style>
 :root{
@@ -50,7 +51,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
 </head>
 <body>
 <header><div class="container nav">
-  <div class="logo">Cine<span>Verse</span></div>
+  <div class="logo">Tela<span>Flux</span></div>
   <nav><a href="#inicio">Início</a><a href="#lancamentos">Lançamentos</a><a href="#ranking">Ranking</a><a href="#lista">Minha lista</a></nav>
   <div class="actions"><button class="iconbtn" onclick="toggleTheme()" title="Alternar tema">☼</button><button class="iconbtn" onclick="showList()">♡ <span id="favCount">0</span></button><button class="primary" id="loginBtn" onclick="login()">Entrar</button></div>
 </div></header>
@@ -72,7 +73,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
     <input id="search" placeholder="🔎 Buscar filme ou série..." oninput="render()">
     <select id="type" onchange="render()"><option value="all">Todos</option><option value="filme">Filmes</option><option value="serie">Séries</option></select>
     <select id="platform" onchange="render()"><option value="all">Todas as plataformas</option><option>Netflix</option><option>Prime Video</option><option>Disney+</option><option>HBO Max</option><option>Apple TV+</option></select>
-    <select id="genre" onchange="render()"><option value="all">Todos os gêneros</option><option>Ação</option><option>Drama</option><option>Comédia</option><option>Ficção</option><option>Terror</option><option>Romance</option><<option>Anime</option>/select>
+    <select id="genre" onchange="render()"><option value="all">Todos os gêneros</option><option>Ação</option><option>Drama</option><option>Comédia</option><option>Ficção</option><option>Terror</option><option>Romance</option><option>Anime</option></select>
   </div>
   <div class="chips">
     <button class="chip active" onclick="quickFilter('all',this)">Todos</button><button class="chip" onclick="quickFilter('hoje',this)">🔥 Em destaque</button><button class="chip" onclick="quickFilter('breve',this)">⏳ Próximos</button><button class="chip" onclick="quickFilter('filme',this)">🎬 Filmes</button><button class="chip" onclick="quickFilter('serie',this)">📺 Séries</button>
@@ -112,8 +113,24 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
 </div></div>
 
 <script>
-const TMDB_API="https://telaflux-api.onrender.com/api";
+const API_BASE="https://telaflux-api.onrender.com/api";
 const IMAGE_BASE="https://image.tmdb.org/t/p/w500";
+
+async function apiFetch(path,options={}){
+  const url=`${API_BASE}${path.startsWith("/")?path:`/${path}`}`;
+  return fetch(url,options);
+}
+
+function adoptSessionFromUrl(){
+  const params=new URLSearchParams(location.search);
+  const token=params.get("telaflux_session");
+  if(!token)return;
+  localStorage.setItem("telaflux_session",token);
+  params.delete("telaflux_session");
+  const query=params.toString();
+  history.replaceState({},document.title,location.pathname+(query?`?${query}`:"")+location.hash);
+}
+adoptSessionFromUrl();
 const data=[];
 let quick="all";
 let favorites=JSON.parse(localStorage.getItem("telaflux-fav")||"[]");
@@ -138,7 +155,7 @@ function setCatalogMessage(html){
 
 async function loadCatalog(){
   try{
-    const res=await fetch(`${TMDB_API}/discover`,{headers:{Accept:"application/json"}});
+    const res=await apiFetch("/discover",{headers:{Accept:"application/json"}});
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const payload=await res.json();
     if(!Array.isArray(payload.results)) throw new Error("Resposta inválida");
@@ -179,11 +196,11 @@ function render(){
   let arr=data.filter(x=>
     (!q||x.title.toLowerCase().includes(q)) &&
     (type==="all"||x.type===type) &&
-   (plat==="all"||[...(x.providers||[]),x.platform].some(p=>{
-  const a=String(p||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
-  const b=String(plat||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
-  return a===b||a.includes(b)||b.includes(a);
-})) &&
+    (plat==="all"||[...(x.providers||[]),x.platform].some(p=>{
+      const a=String(p||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
+      const b=String(plat||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
+      return a===b||a.includes(b)||b.includes(a);
+    })) &&
     (genre==="all"||x.genres.includes(genre)||(genre==="Anime"&&x.genres.includes("Animação")))
   );
   if(quick==="filme") arr=arr.filter(x=>x.type==="filme");
@@ -192,19 +209,67 @@ function render(){
   if(quick==="breve") arr=arr.filter(x=>x.tag!=="DISPONÍVEL");
 
   document.getElementById("count").textContent=`${arr.length} título${arr.length!==1?"s":""}`;
-  document.getElementById("grid").innerHTML=arr.map(card).join("")||
+  const cards=arr.map((x,i)=>{
+    try{
+      return card(normalizeCardData(x));
+    }catch(e){
+      console.error("Falha ao renderizar título",i,x,e);
+      return fallbackCard(normalizeCardData(x),i);
+    }
+  }).join("");
+  document.getElementById("grid").innerHTML=cards||
     '<div class="empty" style="grid-column:1/-1">Nenhum título encontrado.</div>';
   updateList();
 }
 
-function card(x){
+function normalizeCardData(x={}){
+  const safe=(v,d="")=>v==null?d:String(v);
+  const providers=Array.isArray(x.providers)?x.providers.map(v=>safe(v)).filter(Boolean):[];
+  const genres=Array.isArray(x.genres)?x.genres.map(v=>safe(v)).filter(Boolean):[];
+  return {
+    id:Number.isFinite(Number(x.id))?Number(x.id):0,
+    title:safe(x.title||x.name,"Sem título"),
+    type:x.type==="serie"||x.media_type==="tv"?"serie":"filme",
+    mediaType:x.mediaType==="tv"||x.media_type==="tv"?"tv":"movie",
+    date:safe(x.date||""),
+    platform:safe(x.platform||"Streaming"),
+    providers,genres,
+    rating:safe(x.rating,"0.0"),
+    desc:safe(x.desc||x.overview,"Sem sinopse disponível."),
+    c1:safe(x.c1,"#2a2d3a"),c2:safe(x.c2,"#0f1117"),
+    tag:safe(x.tag,"EM DESTAQUE"),
+    img:safe(x.img,"")
+  };
+}
+function fallbackCard(x={},index=0){
+  const title=escapeHtml(x.title||"Sem título");
+  const id=Number.isFinite(Number(x.id))?Number(x.id):0;
+  const type=x.mediaType==="tv"?"tv":"movie";
+  const poster=x.img?`<img class="realposter" src="${escapeHtml(x.img)}" alt="Pôster de ${title}" loading="lazy">`:"";
+  const platform=escapeHtml((x.providers||[]).slice(0,2).join(" · ")||x.platform||"Streaming");
+  return `<article class="card" data-fallback="${index}">
+    <div class="poster" style="--c1:${escapeHtml(x.c1)};--c2:${escapeHtml(x.c2)}">
+      ${poster}<span class="badge">${escapeHtml(x.tag)}</span>
+      <div class="poster-title">${title}</div>
+    </div>
+    <div class="card-body">
+      <div class="title">${title}</div>
+      <div class="meta">${escapeHtml(x.date||"Data não informada")} · ${x.type==="filme"?"Filme":"Série"} · <span class="rating">★ ${escapeHtml(x.rating||"0.0")}</span></div>
+      <span class="platform">${platform}</span>
+      <div class="details"><button onclick="openById(${id},'${type}')">Detalhes</button></div>
+    </div>
+  </article>`;
+}
+
+function card(x={}){
+  x=normalizeCardData(x);
   const key=mediaKey(x);
   const on=favorites.includes(key)||favorites.includes(String(x.id));
   const poster=x.img
     ? `<img class="realposter" src="${escapeHtml(x.img)}" alt="Pôster de ${escapeHtml(x.title)}" loading="lazy" onerror="this.remove()">`
     : "";
   return `<article class="card">
-    <div class="poster" style="--c1:${x.c1};--c2:${x.c2}">
+    <div class="poster" style="--c1:${escapeHtml(x.c1)};--c2:${escapeHtml(x.c2)}">
       ${poster}<span class="badge">${escapeHtml(x.tag)}</span>
       <button class="fav ${on?"on":""}" aria-label="${on?"Remover":"Adicionar"} ${escapeHtml(x.title)}" onclick="event.stopPropagation();toggleFav(${x.id},'${x.mediaType}')">${on?"♥":"♡"}</button>
       <div class="poster-title">${escapeHtml(x.title)}</div>
@@ -234,7 +299,7 @@ async function toggleFav(id,mediaType){
   const sid=localStorage.getItem("telaflux_session");
   if(sid && x.tmdbId){
     try{
-      const r=await fetch("/api/watchlist",{
+      const r=await apiFetch("/watchlist",{
         method:"POST",
         headers:{"Content-Type":"application/json","x-telaflux-session":sid},
         body:JSON.stringify({media_id:x.tmdbId,media_type:x.mediaType,watchlist:adding})
@@ -291,7 +356,7 @@ async function openById(id,mediaType){
     return;
   }
   try{
-    const r=await fetch(`/api/title/${x.mediaType}/${x.tmdbId}`);
+    const r=await apiFetch(`/title/${x.mediaType}/${x.tmdbId}`);
     if(!r.ok) throw new Error("Falha ao carregar detalhes");
     const j=await r.json();
     const d=j.detail||{};
@@ -320,7 +385,7 @@ function detailHtml(x,d,credits,providers,videos){
 }
 async function fetchProviders(type,id){
   try{
-    const r=await fetch(`/api/watch?tmdb_id=${encodeURIComponent(id)}&type=${encodeURIComponent(type)}`);
+    const r=await apiFetch(`/watch?tmdb_id=${encodeURIComponent(id)}&type=${encodeURIComponent(type)}`);
     if(!r.ok)return [];
     const j=await r.json();
     const p=j.providers||{};
@@ -332,7 +397,7 @@ async function trailer(id,mediaType){
   if(!x)return;
   if(!x.tmdbId){openById(id,mediaType);return}
   try{
-    const r=await fetch(`/api/title/${x.mediaType}/${x.tmdbId}`);
+    const r=await apiFetch(`/title/${x.mediaType}/${x.tmdbId}`);
     const j=await r.json();
     const v=(j.videos?.results||[]).find(v=>v.site==="YouTube"&&(v.type==="Trailer"||v.type==="Teaser"));
     if(v) window.open(`https://www.youtube.com/watch?v=${encodeURIComponent(v.key)}`,"_blank","noopener");
@@ -354,18 +419,18 @@ async function recommend(){
   box.innerHTML=x?`<strong>Minha sugestão: ${escapeHtml(x.title)}</strong><p style="color:var(--muted)">${escapeHtml(x.desc)}</p><button class="primary" onclick="openById(${x.id},'${x.mediaType}')">Ver detalhes</button>`:"Nenhum título disponível.";
 }
 
-async function login(){location.href="/api/auth/start";}
+async function login(){location.href=`${API_BASE}/auth/start`;}
 async function loadProfile(){
   const sid=localStorage.getItem("telaflux_session");
   if(!sid)return;
   try{
-    const r=await fetch("/api/me",{headers:{"x-telaflux-session":sid}});
+    const r=await apiFetch("/me",{headers:{"x-telaflux-session":sid}});
     if(!r.ok){localStorage.removeItem("telaflux_session");return}
     const d=await r.json();
     const b=document.getElementById("loginBtn");
     b.textContent="👤 "+(d.account.username||"Perfil");
     b.onclick=()=>openProfile(d.account);
-    const w=await fetch("/api/watchlist",{headers:{"x-telaflux-session":sid}});
+    const w=await apiFetch("/watchlist",{headers:{"x-telaflux-session":sid}});
     if(w.ok){
       const j=await w.json();
       favorites=[
@@ -384,7 +449,7 @@ function openProfile(a){
 function closeProfile(){document.getElementById("profileModal").classList.remove("open");}
 async function logout(){
   const sid=localStorage.getItem("telaflux_session");
-  if(sid)try{await fetch("/api/logout",{method:"POST",headers:{"x-telaflux-session":sid}})}catch(e){}
+  if(sid)try{await apiFetch("/logout",{method:"POST",headers:{"x-telaflux-session":sid}})}catch(e){}
   localStorage.removeItem("telaflux_session");location.reload();
 }
 async function requestNotifications(){
