@@ -39,7 +39,7 @@ linear-gradient(160deg,#31204d,#d84955 55%,#151522);box-shadow:0 30px 80px #000;
 .recommend{background:linear-gradient(120deg,#161323,#10141b);border:1px solid var(--line);border-radius:24px;padding:25px}.options{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}.option{border:1px solid var(--line);background:#0d0f15;color:#ddd;border-radius:11px;padding:10px 13px;cursor:pointer}.option.selected{border-color:#9a75ff;background:#241b3b}.recommend-result{margin-top:20px;padding:18px;border-radius:16px;background:#0b0d12;display:none}
 .empty{text-align:center;color:var(--muted);padding:45px}.count{color:var(--muted);font-size:13px}
 footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var(--muted);font-size:13px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.open{display:flex}.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#101219;border:1px solid #2c3040;border-radius:22px;padding:25px;position:relative}.close{position:absolute;right:15px;top:15px;border:0;background:#222631;color:white;border-radius:50%;width:36px;height:36px;cursor:pointer}.modal-cover{height:210px;border-radius:16px;margin-bottom:20px;display:flex;align-items:end;padding:20px;background:linear-gradient(135deg,var(--c1),var(--c2));font-size:36px;font-weight:950}.modal p{color:#c5c8d2;line-height:1.65}.modal-info{display:flex;gap:8px;flex-wrap:wrap;color:#bfc2cc;font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.open{display:flex}.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#101219;border:1px solid #2c3040;border-radius:22px;padding:25px;position:relative}.close{position:absolute;right:15px;top:15px;border:0;background:#222631;color:white;border-radius:50%;width:36px;height:36px;cursor:pointer}.modal-cover{position:relative;overflow:hidden;height:210px;border-radius:16px;margin-bottom:20px;display:flex;align-items:end;padding:20px;background:linear-gradient(135deg,var(--c1),var(--c2));font-size:36px;font-weight:950}.modal p{color:#c5c8d2;line-height:1.65}.modal .synopsis{margin:18px 0 0;padding:14px 16px;border:1px solid #2c3040;border-radius:14px;background:#151822}.modal .synopsis-title{display:block;margin-bottom:6px;color:#fff;font-weight:900}.modal .synopsis-text{margin:0;color:#c5c8d2;line-height:1.6}.watch-area{margin:16px 0}.watch-options{display:none;margin-top:12px;padding:14px;border:1px solid #2c3040;border-radius:14px;background:#151822}.watch-options.open{display:block}.provider-list{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.provider-chip{display:inline-flex;padding:8px 10px;border-radius:999px;background:#232735;color:#fff;font-size:13px}.watch-link{display:inline-block;text-decoration:none;margin-top:8px}.modal-info{display:flex;gap:8px;flex-wrap:wrap;color:#bfc2cc;font-size:13px}
 @media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}.hero-art{display:none}.feature-grid{grid-template-columns:1fr 1fr}.feature.big{grid-column:1/-1}}
 @media(max-width:620px){nav{display:none}.nav{justify-content:space-between}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.poster{height:235px}.feature-grid{grid-template-columns:1fr}.feature.big{grid-column:auto}h1{letter-spacing:-2px}.hero{padding-top:45px}.section{padding:30px 0}}
 </style>
@@ -367,20 +367,33 @@ async function openById(id,mediaType){
     box.innerHTML=localDetailHtml(x)+"<p>Não foi possível carregar dados adicionais agora.</p>";
   }
 }
+function miniSynopsis(text){
+  const clean=String(text||"Sem sinopse disponível.").replace(/\\s+/g," ").trim();
+  if(clean.length<=280)return clean;
+  return clean.slice(0,277).replace(/\\s+\\S*$/,"")+"...";
+}
 function localDetailHtml(x){
   const poster=x.img?`<img class="realposter" src="${escapeHtml(x.img)}" alt="">`:"";
-  return `<div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${poster}<span style="position:relative;z-index:1">${escapeHtml(x.title)}</span></div><div class="modal-info"><span>${escapeHtml(x.date)}</span><span>★ ${escapeHtml(x.rating)}</span><span>${escapeHtml(x.type)}</span></div><p>${escapeHtml(x.desc)}</p>`;
+  const names=Array.isArray(x.providers)?x.providers:[];
+  const watch=names.length
+    ? `<div class="watch-area"><button class="primary" type="button" onclick="document.getElementById('watchOptions').classList.toggle('open')">📺 Onde assistir</button><div id="watchOptions" class="watch-options"><p><b>Disponível no Brasil:</b></p><div class="provider-list">${names.map(name=>`<span class="provider-chip">${escapeHtml(name)}</span>`).join("")}</div></div></div>`
+    : `<div class="watch-area"><button class="ghost" type="button" onclick="document.getElementById('watchOptions').classList.toggle('open')">📺 Onde assistir</button><div id="watchOptions" class="watch-options"><p><b>Nenhuma plataforma encontrada no Brasil no momento.</b></p></div></div>`;
+  return `<div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${poster}<span style="position:relative;z-index:1">${escapeHtml(x.title)}</span></div><div class="modal-info"><span>${escapeHtml(x.date)}</span><span>★ ${escapeHtml(x.rating)}</span><span>${escapeHtml(x.type)}</span></div>${watch}<div class="synopsis"><span class="synopsis-title">📖 Sinopse</span><p class="synopsis-text">${escapeHtml(miniSynopsis(x.desc))}</p></div>`;
 }
 function detailHtml(x,d,credits,providers,videos){
   const title=d.title||d.name||x.title;
   const poster=d.poster_path?IMAGE_BASE+d.poster_path:x.img;
   const cast=(credits.cast||[]).slice(0,5).map(c=>escapeHtml(c.name)).join(", ");
   const trailerVideo=(videos.results||[]).find(v=>v.site==="YouTube"&&(v.type==="Trailer"||v.type==="Teaser"));
-  const watch=providers.length?`<p><b>Onde assistir no Brasil:</b> ${providers.map(escapeHtml).join(" · ")}</p>`:"<p><b>Onde assistir:</b> nenhuma plataforma encontrada no momento.</p>";
+  const providerNames=Array.isArray(providers)?providers:(providers?.names||[]);
+  const providerLink=Array.isArray(providers)?null:(providers?.link||null);
+  const watch=providerNames.length
+    ? `<div class="watch-area"><button class="primary" type="button" onclick="document.getElementById('watchOptions').classList.toggle('open')">📺 Onde assistir</button><div id="watchOptions" class="watch-options"><p><b>Disponível no Brasil:</b></p><div class="provider-list">${providerNames.map(name=>`<span class="provider-chip">${escapeHtml(name)}</span>`).join("")}</div>${providerLink?`<a class="ghost watch-link" href="${escapeHtml(providerLink)}" target="_blank" rel="noopener noreferrer">Ver opções e preços</a>`:""}</div></div>`
+    : `<div class="watch-area"><button class="ghost" type="button" onclick="document.getElementById('watchOptions').classList.toggle('open')">📺 Onde assistir</button><div id="watchOptions" class="watch-options"><p><b>Nenhuma plataforma encontrada no Brasil no momento.</b></p>${providerLink?`<a class="ghost watch-link" href="${escapeHtml(providerLink)}" target="_blank" rel="noopener noreferrer">Ver disponibilidade</a>`:""}</div></div>`;
   return `<div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${poster?`<img class="realposter" src="${escapeHtml(poster)}" alt="">`:""}<span style="position:relative;z-index:1">${escapeHtml(title)}</span></div>
     <div class="modal-info"><span>${escapeHtml(d.release_date||d.first_air_date||x.date||"")}</span><span>★ ${Number(d.vote_average||x.rating||0).toFixed(1)}</span><span>${d.runtime?escapeHtml(d.runtime+" min"):""}</span></div>
-    <p>${escapeHtml(d.overview||x.desc||"Sem sinopse disponível.")}</p>
     ${cast?`<p><b>Elenco:</b> ${cast}</p>`:""}${watch}
+    <div class="synopsis"><span class="synopsis-title">📖 Sinopse</span><p class="synopsis-text">${escapeHtml(miniSynopsis(d.overview||x.desc||"Sem sinopse disponível."))}</p></div>
     ${trailerVideo?`<p><button class="primary" onclick="window.open('https://www.youtube.com/watch?v=${encodeURIComponent(trailerVideo.key)}','_blank','noopener')">▶ Assistir trailer</button></p>`:""}`;
 }
 async function fetchProviders(type,id){
@@ -389,7 +402,8 @@ async function fetchProviders(type,id){
     if(!r.ok)return [];
     const j=await r.json();
     const p=j.providers||{};
-    return [...(p.flatrate||[]),...(p.free||[]),...(p.ads||[])].map(x=>x.provider_name).filter((v,i,a)=>v&&a.indexOf(v)===i);
+    const names=[...(p.flatrate||[]),...(p.free||[]),...(p.ads||[])].map(x=>x.provider_name).filter((v,i,a)=>v&&a.indexOf(v)===i);
+    return {names,link:j.link||null};
   }catch(e){return []}
 }
 async function trailer(id,mediaType){
