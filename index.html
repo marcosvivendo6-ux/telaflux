@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b0b10">
 <meta name="description" content="TelaFlux: descubra lançamentos, filmes, séries, trailers e recomendações em um só lugar.">
-<meta name="telaflux-build" content="2026-09-11-render-fix-v2">
+<meta name="telaflux-build" content="2026-09-11-anime-category-fix-v9">
 <title>TelaFlux — Filmes, Séries e Lançamentos</title>
 <style>
 :root{
@@ -202,7 +202,7 @@ function render(){
       const b=String(plat||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
       return a===b||a.includes(b)||b.includes(a);
     })) &&
-    (genre==="all"||x.genres.includes(genre)||(genre==="DC"&&x.categories?.includes("DC")))
+    (genre==="all"||x.genres.includes(genre)||(genre==="Anime"&&x.categories?.includes("Anime"))||(genre==="DC"&&x.categories?.includes("DC")))
   );
   if(quick==="filme") arr=arr.filter(x=>x.type==="filme");
   if(quick==="serie") arr=arr.filter(x=>x.type==="serie");
