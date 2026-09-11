@@ -402,7 +402,16 @@ async function fetchProviders(type,id){
     if(!r.ok)return [];
     const j=await r.json();
     const p=j.providers||{};
-    const names=[...(p.flatrate||[]),...(p.free||[]),...(p.ads||[])].map(x=>x.provider_name).filter((v,i,a)=>v&&a.indexOf(v)===i);
+    const normalize=name=>{
+      const n=String(name||"").trim().toLowerCase();
+      if(n==="amazon prime video"||n==="prime video") return "Prime Video";
+      if(n==="disney plus"||n==="disney+") return "Disney+";
+      if(n==="max"||n==="hbo max") return "HBO Max";
+      if(n==="apple tv"||n==="apple tv+") return "Apple TV+";
+      return String(name||"").trim();
+    };
+    const all=[...(p.flatrate||[]),...(p.free||[]),...(p.ads||[]),...(p.rent||[]),...(p.buy||[])];
+    const names=all.map(x=>normalize(x.provider_name)).filter((v,i,a)=>v&&a.indexOf(v)===i);
     return {names,link:j.link||null};
   }catch(e){return []}
 }
