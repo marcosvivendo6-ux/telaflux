@@ -72,7 +72,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
     <input id="search" placeholder="🔎 Buscar filme ou série..." oninput="render()">
     <select id="type" onchange="render()"><option value="all">Todos</option><option value="filme">Filmes</option><option value="serie">Séries</option></select>
     <select id="platform" onchange="render()"><option value="all">Todas as plataformas</option><option>Netflix</option><option>Prime Video</option><option>Disney+</option><option>HBO Max</option><option>Apple TV+</option></select>
-    <select id="genre" onchange="render()"><option value="all">Todos os gêneros</option><option>Ação</option><option>Drama</option><option>Comédia</option><option>Ficção</option><option>Terror</option><option>Romance</option></select>
+    <select id="genre" onchange="render()"><option value="all">Todos os gêneros</option><option>Ação</option><option>Drama</option><option>Comédia</option><option>Ficção</option><option>Terror</option><option>Romance</option><<option>Anime</option>/select>
   </div>
   <div class="chips">
     <button class="chip active" onclick="quickFilter('all',this)">Todos</button><button class="chip" onclick="quickFilter('hoje',this)">🔥 Em destaque</button><button class="chip" onclick="quickFilter('breve',this)">⏳ Próximos</button><button class="chip" onclick="quickFilter('filme',this)">🎬 Filmes</button><button class="chip" onclick="quickFilter('serie',this)">📺 Séries</button>
@@ -184,7 +184,7 @@ function render(){
   const b=String(plat||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
   return a===b||a.includes(b)||b.includes(a);
 })) &&
-    (genre==="all"||x.genres.includes(genre))
+    (genre==="all"||x.genres.includes(genre)||(genre==="Anime"&&x.genres.includes("Animação")))
   );
   if(quick==="filme") arr=arr.filter(x=>x.type==="filme");
   if(quick==="serie") arr=arr.filter(x=>x.type==="serie");
