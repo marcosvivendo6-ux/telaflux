@@ -202,7 +202,7 @@ function render(){
       const b=String(plat||"").toLowerCase().replace(/[+]/g," plus").replace(/\s+/g," ").trim();
       return a===b||a.includes(b)||b.includes(a);
     })) &&
-    (genre==="all"||x.genres.includes(genre)||(genre==="Anime"&&x.genres.includes("Animação"))||(genre==="DC"&&x.categories?.includes("DC")))
+    (genre==="all"||x.genres.includes(genre)||(genre==="DC"&&x.categories?.includes("DC")))
   );
   if(quick==="filme") arr=arr.filter(x=>x.type==="filme");
   if(quick==="serie") arr=arr.filter(x=>x.type==="serie");
