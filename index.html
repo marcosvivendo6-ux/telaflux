@@ -87,6 +87,18 @@ header{background:rgba(2,7,20,.72);border-bottom:1px solid rgba(55,153,255,.28);
  .container{width:min(100% - 28px,1180px)}.nav{height:64px}.logo{font-size:20px}.brand-tagline{font-size:7px}.hero{min-height:430px;padding:44px 14px 24px;align-items:flex-start}.hero-copy{max-width:100%;padding-top:20px}.hero-copy:after{inset:-20px -20px -50px -20px}.eyebrow{font-size:10px}.hero h1{font-size:clamp(40px,11vw,54px);letter-spacing:-2.5px;margin:11px 0 14px;max-width:330px}.hero p{font-size:15px;line-height:1.42;max-width:355px}.hero-buttons{margin-top:19px;max-width:360px}.hero-art:after{width:420px;height:420px;right:-110px;bottom:-235px}.hero:after{right:8px;top:92px;width:100px;height:64px}.section{padding:26px 0}.section h2{font-size:27px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.poster{height:220px}.feature-grid,.upcoming-grid{grid-template-columns:1fr}
 }
 
+
+/* V28 — experiência de streaming NEXORA */
+.hero-cinematic{position:relative;min-height:620px;max-width:1320px;width:100%;overflow:hidden;border-radius:0 0 34px 34px;padding:110px max(4%,calc((100% - 1180px)/2)) 70px;display:flex;align-items:flex-end;background:#060713;margin-top:0}
+.hero-backdrop{position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(4,6,18,.98) 0%,rgba(5,7,20,.86) 34%,rgba(5,7,20,.3) 66%,rgba(5,7,20,.8) 100%),linear-gradient(180deg,rgba(4,6,18,.2) 45%,#080914 100%);background-size:cover;background-position:center;filter:saturate(1.08);transition:background-image .35s ease,opacity .35s ease}
+.hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 78% 24%,rgba(113,79,255,.18),transparent 30%),radial-gradient(ellipse at 22% 76%,rgba(39,104,255,.18),transparent 34%);pointer-events:none}
+.cinematic-copy{position:relative;z-index:2;max-width:650px}.hero-kicker{font-size:14px;font-weight:800;color:#d8d9e6;margin-top:10px}.hero-cinematic h1{font-size:clamp(46px,7vw,82px);margin:8px 0 15px;letter-spacing:-3.5px}.hero-cinematic .hero-meta{display:flex;gap:16px;flex-wrap:wrap;color:#d7d9e4;font-size:14px;margin-top:12px}.hero-watch{box-shadow:0 12px 35px rgba(255,49,92,.25)}.hero-details{border-color:rgba(255,255,255,.2);background:rgba(7,9,22,.38);backdrop-filter:blur(10px)}.hero-dots{display:flex;gap:7px;margin-top:25px}.hero-dots button{width:24px;height:4px;border:0;border-radius:99px;background:rgba(255,255,255,.28);padding:0;cursor:pointer}.hero-dots button.active{width:38px;background:#fff}
+.stream-section{padding:26px 0 14px}.stream-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:14px}.stream-head h2{font-size:30px;letter-spacing:-1.5px;margin:3px 0 0}.section-eyebrow{font-size:10px;letter-spacing:1.8px;color:#8dbfff;font-weight:900}.see-all{background:none;border:0;color:#aeb7d3;cursor:pointer;font-weight:700}.see-all:hover{color:#fff}.rail{display:grid;grid-auto-flow:column;grid-auto-columns:190px;grid-template-rows:1fr;gap:13px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;padding:4px 2px 12px 1px;scrollbar-width:none}.rail::-webkit-scrollbar{display:none}.rail .card{scroll-snap-align:start}.rail .poster{height:275px}.rail .card-body{padding:11px}.rail .details{display:none}.rail .card .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rail .card .platform{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.universe-pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:13px}.universe-pills::-webkit-scrollbar{display:none}.universe-pill{white-space:nowrap;padding:9px 14px;border-radius:999px;border:1px solid rgba(120,120,220,.24);background:rgba(12,15,32,.72);color:#cfd3e3;cursor:pointer}.universe-pill.active{background:linear-gradient(135deg,rgba(43,132,255,.3),rgba(255,49,92,.26));border-color:rgba(120,170,255,.6);color:#fff}.continue-empty{color:var(--muted);padding:16px 0 4px}.continue-section{padding-bottom:35px}
+.mobile-nav{display:none}
+@media(min-width:951px){.hero-cinematic{margin-left:auto;margin-right:auto}.hero-cinematic .hero-copy{padding-bottom:20px}.stream-section{padding-top:38px}.rail{grid-auto-columns:200px}.rail .poster{height:290px}}
+@media(max-width:950px){.hero-cinematic{min-height:560px;padding:110px 18px 32px;border-radius:0 0 28px 28px;align-items:flex-end}.hero-backdrop{background-position:62% center}.hero-cinematic h1{font-size:clamp(42px,11vw,62px);line-height:.96;letter-spacing:-2.7px}.hero-kicker{font-size:13px}.hero-cinematic .hero-meta{gap:10px;font-size:13px}.stream-section{padding:25px 0 7px}.stream-head h2{font-size:26px}.stream-head .see-all{font-size:12px}.rail{grid-auto-columns:152px;gap:10px;margin-right:-14px;padding-right:14px}.rail .poster{height:225px}.rail .card-body{padding:9px}.rail .card .title{font-size:13px}.rail .card .meta{font-size:10px}.rail .card .platform{font-size:9px;margin-top:7px}.universe-pills{margin-right:-14px;padding-right:14px}.mobile-nav{position:fixed;display:flex;left:10px;right:10px;bottom:10px;z-index:50;justify-content:space-around;padding:8px 6px;border:1px solid rgba(134,116,255,.22);border-radius:18px;background:rgba(7,9,22,.9);backdrop-filter:blur(18px);box-shadow:0 12px 40px rgba(0,0,0,.55)}.mobile-nav button{flex:1;background:none;border:0;color:#aeb5ca;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px;cursor:pointer}.mobile-nav button.active,.mobile-nav button:hover{color:#fff}.mobile-nav .mn-icon{font-size:18px;line-height:1}.continue-section{padding-bottom:95px}}
+@media(max-width:620px){.hero-cinematic{min-height:535px;padding:105px 14px 27px}.hero-cinematic .eyebrow{font-size:10px}.hero-cinematic h1{margin:7px 0 12px}.hero-cinematic .hero-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hero-cinematic .hero-buttons>*{min-height:47px}.hero-dots{margin-top:20px}.stream-head{align-items:center}.stream-head h2{font-size:24px}.section-eyebrow{font-size:9px}.rail{grid-auto-columns:145px}.rail .poster{height:215px}}
 </style>
 
 <style>
@@ -163,14 +175,48 @@ header{background:rgba(4,5,15,.78);border-bottom-color:rgba(145,120,255,.22);box
 </div></header>
 
 <main id="inicio">
-<section class="hero container">
-  <div class="hero-copy">
-    <div class="eyebrow">O seu próximo filme começa aqui</div>
-    <h1>Descubra o que assistir hoje.</h1>
-    <p>Filmes, séries, lançamentos, trailers e recomendações em um só lugar. Encontre sua próxima história sem perder horas procurando.</p>
-    <div class="hero-buttons"><a class="primary" href="#lancamentos" style="text-decoration:none">Explorar lançamentos</a><button class="ghost" onclick="openRandom()">🎲 Surpreenda-me</button></div>
+<section class="hero hero-cinematic container" id="destaque">
+  <div class="hero-backdrop" id="heroBackdrop" aria-hidden="true"></div>
+  <div class="hero-vignette" aria-hidden="true"></div>
+  <div class="hero-copy cinematic-copy">
+    <div class="eyebrow" id="heroEyebrow">EM DESTAQUE</div>
+    <div class="hero-kicker" id="heroKicker">Uma história para viver hoje</div>
+    <h1 id="heroTitle">Duna: Parte Dois</h1>
+    <p id="heroDesc">Paul Atreides se une a Chani e aos Fremen enquanto busca vingança contra os conspiradores que destruíram sua família.</p>
+    <div class="hero-meta" id="heroMeta"><span>🎬 Filme</span><span>⭐ 8.8</span><span>2024</span></div>
+    <div class="hero-buttons">
+      <button class="primary hero-watch" id="heroWatch" onclick="heroWatchNow()">▶ Assistir agora</button>
+      <button class="ghost hero-details" onclick="heroDetails()">＋ Mais detalhes</button>
+    </div>
+    <div class="hero-dots" id="heroDots" aria-label="Destaques do catálogo"><button class="active" aria-label="Destaque 1"></button><button aria-label="Destaque 2"></button><button aria-label="Destaque 3"></button></div>
   </div>
-  <div class="hero-art"><div class="arttitle"><span class="art-logo">NEX<span class="art-x">X</span><span class="art-o">O</span>RA</span><small>Seu universo de filmes e séries.</small></div></div>
+</section>
+
+<section class="stream-section container" id="em-alta">
+  <div class="stream-head"><div><span class="section-eyebrow">TENDÊNCIAS</span><h2>Em alta no momento</h2></div><button class="see-all" onclick="focusCatalog('all')">Ver todos →</button></div>
+  <div class="rail" id="hotRail"></div>
+</section>
+
+<section class="stream-section container" id="estrelas">
+  <div class="stream-head"><div><span class="section-eyebrow">AVALIAÇÃO DO PÚBLICO</span><h2>Estrelas do público</h2></div><button class="see-all" onclick="focusCatalog('hoje')">Mais bem avaliados →</button></div>
+  <div class="rail" id="starsRail"></div>
+</section>
+
+<section class="stream-section container" id="novos-mundos">
+  <div class="stream-head"><div><span class="section-eyebrow">CHEGANDO AGORA</span><h2>Novos mundos</h2></div><button class="see-all" onclick="document.getElementById('proximos').scrollIntoView({behavior:'smooth'})">Próximos lançamentos →</button></div>
+  <div class="rail" id="newRail"></div>
+</section>
+
+<section class="stream-section container" id="universos">
+  <div class="stream-head"><div><span class="section-eyebrow">PARA VOCÊ</span><h2>Universos que você vai amar</h2></div></div>
+  <div class="universe-pills" id="universePills"></div>
+  <div class="rail" id="universeRail"></div>
+</section>
+
+<section class="stream-section container continue-section" id="continuar">
+  <div class="stream-head"><div><span class="section-eyebrow">RETOMAR</span><h2>Continue assistindo</h2></div></div>
+  <div class="rail" id="continueRail"></div>
+  <div class="continue-empty" id="continueEmpty">Você ainda não começou nenhum título. Abra um filme ou série e ele aparecerá aqui.</div>
 </section>
 
 <section class="section container" id="lancamentos">
@@ -209,6 +255,7 @@ header{background:rgba(4,5,15,.78);border-bottom-color:rgba(145,120,255,.22);box
 </section>
 </main>
 
+<div class="mobile-nav" aria-label="Navegação principal"><button class="active" onclick="scrollToId('inicio')"><span class="mn-icon">⌂</span>Início</button><button onclick="scrollToId('em-alta')"><span class="mn-icon">🔥</span>Em alta</button><button onclick="scrollToId('novos-mundos')"><span class="mn-icon">🌌</span>Novos mundos</button><button onclick="scrollToId('lista')"><span class="mn-icon">♡</span>Minha lista</button><button onclick="showList()"><span class="mn-icon">☰</span>Menu</button></div>
 <footer><div class="container">© 2026 NEXORA · Seu universo de filmes e séries · Dados via TMDB.</div></footer><div class="modal" id="profileModal"><div class="modal-box"><button class="close" onclick="closeProfile()">×</button><h2>👤 Meu perfil</h2><div id="profileContent"></div></div></div>
 
 <div class="modal" id="modal"><div class="modal-box">
@@ -219,6 +266,8 @@ header{background:rgba(4,5,15,.78);border-bottom-color:rgba(145,120,255,.22);box
 const API_BASE="https://telaflux-api.onrender.com/api";
 const IMAGE_CARD_BASE="https://image.tmdb.org/t/p/w342";
 const IMAGE_MODAL_BASE="https://image.tmdb.org/t/p/w780";
+const IMAGE_BACKDROP_BASE="https://image.tmdb.org/t/p/w1280";
+const FEATURED_TMDB_ID=693134;
 
 async function apiFetch(path,options={}){
   const url=`${API_BASE}${path.startsWith("/")?path:`/${path}`}`;
@@ -298,6 +347,7 @@ async function loadCatalog(){
       img:x.poster_path?IMAGE_CARD_BASE+x.poster_path:""
     })));
     render();
+    renderHomeRails();
     setCatalogMessage('<span class="live-dot"></span><b>Catálogo ao vivo</b> — dados, notas, pôsteres e plataformas carregados do TMDB.');
   }catch(e){
     console.error(e);
@@ -307,6 +357,7 @@ async function loadCatalog(){
       {id:9002,tmdbId:null,title:"Stranger Things",type:"serie",mediaType:"tv",date:"17/09/2026",platform:"Netflix",providers:["Netflix"],genres:["Terror","Ficção"],rating:"9.0",desc:"Novas histórias no universo de Hawkins.",c1:"#4b1637",c2:"#11142c",tag:"17 SET",img:""}
     );
     render();
+    renderHomeRails();
   }
 }
 
@@ -566,6 +617,7 @@ async function openById(id,mediaType,fallbackTitle=""){
     };
   }
   if(!x)return;
+  rememberContinue(x);
   const box=document.getElementById("modalContent");
   document.getElementById("modal").classList.add("open");
   box.innerHTML="<p>Carregando detalhes...</p>";
@@ -718,8 +770,35 @@ async function requestNotifications(){
   }catch(e){console.warn(e)}
 }
 
+let featuredItem={id:FEATURED_TMDB_ID,mediaType:"movie",title:"Duna: Parte Dois"};
+let universeGenre="all";
+function scrollToId(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}
+function focusCatalog(mode){quick=mode;document.getElementById("lancamentos").scrollIntoView({behavior:"smooth"});setTimeout(()=>render(),250)}
+function railCard(x){return card(normalizeCardData(x))}
+function renderRail(id,items){const box=document.getElementById(id);if(!box)return;box.innerHTML=items.length?items.slice(0,12).map(railCard).join(""):"<div class=\"continue-empty\">Nenhum título disponível agora.</div>"}
+function renderHomeRails(){
+  const hot=[...data].filter(x=>x.tmdbId).sort((a,b)=>Number(b.popularity||0)-Number(a.popularity||0));
+  const stars=[...data].filter(x=>x.tmdbId).sort((a,b)=>{const ar=a.user_rating!=null&&a.user_rating_votes>0?a.user_rating:Number(a.rating||0),br=b.user_rating!=null&&b.user_rating_votes>0?b.user_rating:Number(b.rating||0);return br-ar});
+  const fresh=[...data].filter(x=>x.tmdbId).sort((a,b)=>{const da=(a.date||"").split("/").reverse().join("-")||"",db=(b.date||"").split("/").reverse().join("-")||"";return db.localeCompare(da)});
+  renderRail("hotRail",hot);renderRail("starsRail",stars);renderRail("newRail",fresh);
+  const genres=["Ação","Ficção","Drama","Comédia","Terror","Romance","Anime","DC"];
+  const pills=document.getElementById("universePills");pills.innerHTML=`<button class=\"universe-pill ${universeGenre==="all"?"active":""}\" onclick=\"setUniverse('all')\">✨ Para descobrir</button>`+genres.map(g=>`<button class=\"universe-pill ${universeGenre===g?"active":""}\" onclick=\"setUniverse('${g}')\">${escapeHtml(g)}</button>`).join("");
+  const uni=universeGenre==="all"?hot.slice(0,12):data.filter(x=>x.genres.includes(universeGenre)||x.categories?.includes(universeGenre)).sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
+  renderRail("universeRail",uni);
+  renderContinue();
+}
+function setUniverse(g){universeGenre=g;renderHomeRails()}
+function getContinue(){try{const j=JSON.parse(storageGet("nexora-continue","[]"));return Array.isArray(j)?j:[]}catch{return []}}
+function renderContinue(){const box=document.getElementById("continueRail"),empty=document.getElementById("continueEmpty"),items=getContinue().map(k=>data.find(x=>mediaKey(x)===k.key)||{id:k.id,mediaType:k.mediaType,title:k.title,type:k.mediaType==="tv"?"serie":"filme",rating:k.rating||"0.0",date:k.date||"",platform:k.platform||"Streaming",providers:k.providers||[],genres:k.genres||[],user_rating:null,user_rating_votes:0,desc:k.desc||"",img:k.img||"",c1:"#20254b",c2:"#0f1117"}).filter(Boolean);
+  box.innerHTML=items.length?items.slice(0,8).map(x=>railCard(x)).join(""):"";empty.style.display=items.length?"none":"block"}
+function rememberContinue(x){if(!x?.id)return;let list=getContinue().filter(k=>k.key!==mediaKey(x));list.unshift({key:mediaKey(x),id:x.id,mediaType:x.mediaType,title:x.title,rating:x.rating,date:x.date,platform:x.platform,providers:x.providers||[],genres:x.genres||[],desc:x.desc||"",img:x.img||""});storageSet("nexora-continue",JSON.stringify(list.slice(0,12)));renderContinue()}
+async function loadHero(){try{const r=await apiFetch(`/title/movie/${FEATURED_TMDB_ID}`);if(!r.ok)throw new Error("hero");const j=await r.json(),d=j.detail||{};featuredItem={id:FEATURED_TMDB_ID,mediaType:"movie",title:d.title||"Duna: Parte Dois"};document.getElementById("heroTitle").textContent=featuredItem.title;document.getElementById("heroDesc").textContent=miniSynopsis(d.overview||"Uma nova jornada pelo deserto de Arrakis.");document.getElementById("heroMeta").innerHTML=`<span>🎬 Filme</span><span>⭐ ${Number(d.vote_average||0).toFixed(1)}</span><span>${escapeHtml(formatBrDate(d.release_date||"2024-03-01").slice(-4))}</span>`;if(d.backdrop_path)document.getElementById("heroBackdrop").style.backgroundImage=`linear-gradient(90deg,rgba(4,6,18,.98) 0%,rgba(5,7,20,.86) 34%,rgba(5,7,20,.3) 66%,rgba(5,7,20,.8) 100%),linear-gradient(180deg,rgba(4,6,18,.15) 42%,#080914 100%),url("${IMAGE_BACKDROP_BASE+d.backdrop_path}")`; }catch(e){console.warn("Hero:",e)}}
+function heroDetails(){openById(FEATURED_TMDB_ID,"movie","Duna: Parte Dois")}
+function heroWatchNow(){rememberContinue({id:FEATURED_TMDB_ID,tmdbId:FEATURED_TMDB_ID,title:featuredItem.title,mediaType:"movie",type:"filme",rating:"8.8",date:"01/03/2024",platform:"Streaming",providers:[],genres:["Ficção","Ação"],desc:"Uma nova jornada pelo deserto de Arrakis.",img:""});heroDetails()}
+
 document.getElementById("favCount").textContent=favorites.length;
 render();
+loadHero();
 loadCatalog();
 loadUpcoming();
 loadProfile();
