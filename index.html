@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b0b10">
 <meta name="description" content="TelaFlux: descubra lançamentos, filmes, séries, trailers e recomendações em um só lugar.">
-<meta name="telaflux-build" content="2026-09-11-upcoming-launches-v13">
+<meta name="telaflux-build" content="2026-09-11-upcoming-launches-v17">
 <title>TelaFlux — Filmes, Séries e Lançamentos</title>
 <style>
 :root{
@@ -34,7 +34,7 @@ linear-gradient(160deg,#31204d,#d84955 55%,#151522);box-shadow:0 30px 80px #000;
 .poster{height:270px;position:relative;display:flex;align-items:end;padding:15px;background:linear-gradient(145deg,var(--c1),var(--c2));overflow:hidden}.poster:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 25%,rgba(0,0,0,.78));}.realposter{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.poster .poster-title{position:relative;z-index:1;font-size:24px;font-weight:950;line-height:.95;letter-spacing:-1px;text-shadow:0 2px 12px #000}
 .badge{position:absolute;z-index:2;top:10px;left:10px;background:rgba(0,0,0,.62);padding:6px 8px;border-radius:8px;font-size:11px;font-weight:800}.fav{position:absolute;z-index:3;right:10px;top:10px;border:0;background:rgba(0,0,0,.55);color:white;width:34px;height:34px;border-radius:50%;cursor:pointer}.fav.on{color:#ff4569}
 .card-body{padding:13px}.title{font-weight:800}.meta{font-size:12px;color:var(--muted);margin-top:6px}.rating{color:#ffd45a;font-weight:800}.platform{display:inline-block;margin-top:9px;font-size:11px;border:1px solid var(--line);padding:5px 7px;border-radius:7px;color:#cfd2dc}.details{display:flex;gap:7px;margin-top:12px}.details button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:#0d0f15;color:white;cursor:pointer}
-.feature-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:15px}.upcoming-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.upcoming-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}.upcoming-poster{height:300px;position:relative;background:linear-gradient(145deg,#2a2d3a,#0f1117);overflow:hidden}.upcoming-poster img{width:100%;height:100%;object-fit:cover}.upcoming-poster:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}.upcoming-label{position:absolute;z-index:2;top:12px;left:12px;padding:7px 9px;border-radius:9px;background:rgba(0,0,0,.7);font-size:11px;font-weight:900;text-transform:uppercase}.upcoming-body{padding:15px}.upcoming-title{font-size:19px;font-weight:900}.upcoming-meta{color:var(--muted);font-size:12px;margin-top:7px}.countdown{color:#ff7d95;font-weight:900;margin-top:8px}.upcoming-actions{display:flex;gap:8px;margin-top:13px}.upcoming-actions button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:#0d0f15;color:white;cursor:pointer}.feature{min-height:240px;border-radius:20px;border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;justify-content:end;overflow:hidden;position:relative}.feature:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,#07080b);z-index:0}.feature>*{z-index:1}.feature.big{min-height:330px;background:linear-gradient(135deg,#3a1d57,#11182d 55%,#0e0e12)}.feature.small1{background:linear-gradient(135deg,#193f4a,#15151d)}.feature.small2{background:linear-gradient(135deg,#56321c,#15151d)}
+.feature-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:15px}.upcoming-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.upcoming-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}.upcoming-poster{height:300px;position:relative;background:linear-gradient(145deg,#2a2d3a,#0f1117);overflow:hidden}.upcoming-poster img{width:100%;height:100%;object-fit:cover}.poster-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#a7abb8;font-size:34px}.poster-placeholder span{font-size:12px}.upcoming-poster:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}.upcoming-label{position:absolute;z-index:2;top:12px;left:12px;padding:7px 9px;border-radius:9px;background:rgba(0,0,0,.7);font-size:11px;font-weight:900;text-transform:uppercase}.upcoming-body{padding:15px}.upcoming-title{font-size:19px;font-weight:900}.upcoming-meta{color:var(--muted);font-size:12px;margin-top:7px}.countdown{color:#ff7d95;font-weight:900;margin-top:8px}.upcoming-actions{display:flex;gap:8px;margin-top:13px}.upcoming-actions button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:#0d0f15;color:white;cursor:pointer}.feature{min-height:240px;border-radius:20px;border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;justify-content:end;overflow:hidden;position:relative}.feature:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,#07080b);z-index:0}.feature>*{z-index:1}.feature.big{min-height:330px;background:linear-gradient(135deg,#3a1d57,#11182d 55%,#0e0e12)}.feature.small1{background:linear-gradient(135deg,#193f4a,#15151d)}.feature.small2{background:linear-gradient(135deg,#56321c,#15151d)}
 .feature h3{font-size:28px;margin:7px 0}.feature p{color:#c6c9d2;max-width:620px}.feature .tag{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#ff8299;font-weight:900}
 .recommend{background:linear-gradient(120deg,#161323,#10141b);border:1px solid var(--line);border-radius:24px;padding:25px}.options{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}.option{border:1px solid var(--line);background:#0d0f15;color:#ddd;border-radius:11px;padding:10px 13px;cursor:pointer}.option.selected{border-color:#9a75ff;background:#241b3b}.recommend-result{margin-top:20px;padding:18px;border-radius:16px;background:#0b0d12;display:none}
 .empty{text-align:center;color:var(--muted);padding:45px}.count{color:var(--muted);font-size:13px}
@@ -83,7 +83,8 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var
 
 <section class="section container" id="proximos">
  <div class="section-head"><div><h2>⏳ Próximos lançamentos</h2><p>Filmes e séries que chegam em breve ao cinema ou ao streaming.</p></div><span class="count" id="upcomingUpdated">Atualizando...</span></div>
- <div id="upcomingGrid" class="upcoming-grid"><div class="empty" style="grid-column:1/-1">Carregando próximos lançamentos...</div></div>
+ <div class="upcoming-group"><div class="section-head"><div><h3 style="margin:0">🔥 Grandes projetos</h3><p>Grandes estúdios, diretores conhecidos, franquias e elencos de destaque.</p></div></div><div id="upcomingMajorGrid" class="upcoming-grid"><div class="empty" style="grid-column:1/-1">Carregando...</div></div></div>
+ <div class="upcoming-group" style="margin-top:30px"><div class="section-head"><div><h3 style="margin:0">💎 Descobertas</h3><p>Novos filmes e séries que podem passar despercebidos — mas podem surpreender.</p></div></div><div id="upcomingDiscoveriesGrid" class="upcoming-grid"><div class="empty" style="grid-column:1/-1">Carregando...</div></div></div>
 </section>
 
 <section class="section container" id="lista">
@@ -315,34 +316,45 @@ function updateList(){
 function showList(){document.getElementById("lista").scrollIntoView({behavior:"smooth"});}
 
 async function loadUpcoming(){
-  const box=document.getElementById("upcomingGrid");
+  const majorBox=document.getElementById("upcomingMajorGrid");
+  const discoveryBox=document.getElementById("upcomingDiscoveriesGrid");
   const stamp=document.getElementById("upcomingUpdated");
   try{
     const r=await apiFetch("/upcoming",{headers:{Accept:"application/json"}});
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const j=await r.json();
-    const items=Array.isArray(j.results)?j.results:[];
-    if(!items.length){box.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum lançamento próximo encontrado.</div>';stamp.textContent="Sem lançamentos no período";return;}
+    const major=Array.isArray(j.major)?j.major:[];
+    const discoveries=Array.isArray(j.discoveries)?j.discoveries:[];
+    const items=[...major,...discoveries];
+    if(!items.length){majorBox.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum lançamento próximo encontrado.</div>';discoveryBox.innerHTML="";stamp.textContent="Sem lançamentos no período";return;}
     const now=new Date();
-    const daysUntil=date=>Math.max(0,Math.ceil((new Date(`${date}T00:00:00`)-now)/86400000));
-    const formatDate=date=>{
+    const daysUntil=date=>{
       const m=String(date||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      return m?`${m[3]}/${m[2]}/${m[1]}`:(date||"Data não informada");
+      if(!m)return 0;
+      const releaseUtc=Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3]));
+      const todayUtc=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+      return Math.max(0,Math.ceil((releaseUtc-todayUtc)/86400000));
     };
-    box.innerHTML=items.map((x,i)=>{
-      const title=escapeHtml(x.title||"Sem título");
+    const formatDate=date=>{const m=String(date||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}/${m[1]}`:(date||"Data não informada");};
+    const renderCard=x=>{
+      const title=escapeHtml(x.title||x.name||"Sem título");
       const date=escapeHtml(formatDate(x.release_date));
       const days=daysUntil(x.release_date);
       const label=escapeHtml(x.release_kind||"Estreia");
       const countdown=days===0?"🚀 Disponível hoje":days===1?"⏰ Amanhã":`⏰ Faltam ${days} dias`;
-      const poster=x.poster_path?`<img src="${escapeHtml(IMAGE_BASE+x.poster_path)}" alt="Pôster de ${title}" loading="lazy" onerror="this.remove()">`:"";
+      const poster=x.poster_path
+        ?`<img src="${escapeHtml(IMAGE_BASE+x.poster_path)}" alt="Pôster de ${title}" loading="lazy" onerror="this.remove()">`
+        :`<div class="poster-placeholder" aria-label="Imagem indisponível">🎬<span>Imagem indisponível</span></div>`;
       const type=x.media_type==="tv"?"Série":"Filme";
       return `<article class="upcoming-card"><div class="upcoming-poster">${poster}<span class="upcoming-label">${label}</span></div><div class="upcoming-body"><div class="upcoming-title">${title}</div><div class="upcoming-meta">${type} · ${date}${x.platform?` · ${escapeHtml(x.platform)}`:""}</div><div class="countdown">${countdown}</div><div class="upcoming-actions"><button onclick="openById(${Number(x.id)},'${x.media_type}',decodeURIComponent('${encodeURIComponent(String(x.title||x.name||"Título")).replace(/'/g,"%27")}'))">Detalhes</button>${x.trailer_key?`<button onclick="window.open('https://www.youtube.com/watch?v=${encodeURIComponent(x.trailer_key)}','_blank','noopener')">Trailer</button>`:""}</div></div></article>`;
-    }).join("");
+    };
+    majorBox.innerHTML=major.length?major.slice(0,9).map(renderCard).join(""):'<div class="empty" style="grid-column:1/-1">Nenhum grande projeto identificado neste período.</div>';
+    discoveryBox.innerHTML=discoveries.length?discoveries.slice(0,9).map(renderCard).join(""):'<div class="empty" style="grid-column:1/-1">Nenhuma descoberta identificada neste período.</div>';
     stamp.textContent=`${items.length} próximos`;
   }catch(e){
     console.warn("Próximos lançamentos:",e);
-    box.innerHTML='<div class="empty" style="grid-column:1/-1">Não foi possível atualizar os próximos lançamentos agora.</div>';
+    majorBox.innerHTML='<div class="empty" style="grid-column:1/-1">Não foi possível atualizar os próximos lançamentos agora.</div>';
+    discoveryBox.innerHTML="";
     stamp.textContent="Atualização indisponível";
   }
 }
@@ -480,30 +492,23 @@ async function trailer(id,mediaType){
 function closeModal(){document.getElementById("modal").classList.remove("open");}
 async function recommend(){
   const mood=document.querySelector("#mood .selected")?.dataset.v||"comedia";
-  let arr=data;
-  if(mood==="terror")arr=arr.filter(x=>x.genres.includes("Terror"));
-  if(mood==="comedia")arr=arr.filter(x=>x.genres.includes("Comédia"));
-  if(mood==="epico")arr=arr.filter(x=>x.genres.includes("Ação")||x.genres.includes("Aventura"));
-  if(mood==="emocionante")arr=arr.filter(x=>x.genres.includes("Drama")||x.genres.includes("Romance"));
-  if(mood==="inteligente")arr=arr.filter(x=>x.genres.includes("Drama")||x.genres.includes("Ficção"));
   const time=document.querySelector("#time .selected")?.dataset.v||"120";
-  const durationOf=x=>{
-    const d=Number(x.runtime||x.duration||0);
-    if(d>0)return d;
-    if(x.mediaType==="tv") return time==="maratona"?480:120;
-    return 120;
-  };
-  if(time!=="maratona") {
-    const limit=Number(time);
-    const within=arr.filter(x=>durationOf(x)<=limit);
-    if(within.length) arr=within;
-  }
-  const x=(arr.length?arr:data).slice().sort((a,b)=>Number(b.rating)-Number(a.rating))[0];
   const box=document.getElementById("recommendResult");
   box.style.display="block";
-  box.innerHTML=x?`<strong>Minha sugestão: ${escapeHtml(x.title)}</strong><p style="color:var(--muted)">${escapeHtml(x.desc)}</p><button class="primary" onclick="openById(${x.id},'${x.mediaType}')">Ver detalhes</button>`:"Nenhum título disponível.";
+  box.innerHTML="⏳ Procurando uma sugestão que combine com seu clima e seu tempo...";
+  try{
+    const params=new URLSearchParams({mood,time});
+    const r=await apiFetch(`/recommend?${params.toString()}`,{headers:{Accept:"application/json"}});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    const x=await r.json();
+    if(!x?.title){box.innerHTML="Nenhum título encontrado para esses critérios. Tente outra duração ou clima.";return}
+    const runtime=x.runtime?` · ${escapeHtml(String(x.runtime))} min`:"";
+    box.innerHTML=`<strong>Minha sugestão: ${escapeHtml(x.title)}</strong><p style="color:var(--muted)">${escapeHtml(x.desc||"Sem sinopse disponível.")}</p><small style="color:var(--muted)">${x.media_type==="tv"?"Série":"Filme"}${runtime}</small><br><button class="primary" onclick="openById(${Number(x.id)},'${x.media_type==='tv'?'tv':'movie'}')">Ver detalhes</button>`;
+  }catch(e){
+    console.error(e);
+    box.innerHTML="⚠️ Não foi possível gerar a recomendação agora. Tente novamente.";
+  }
 }
-
 async function login(){location.href=`${API_BASE}/auth/start`;}
 async function loadProfile(){
   const sid=localStorage.getItem("telaflux_session");
