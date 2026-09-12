@@ -94,11 +94,41 @@ header{background:rgba(2,7,20,.72);border-bottom:1px solid rgba(55,153,255,.28);
 .hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 78% 24%,rgba(113,79,255,.18),transparent 30%),radial-gradient(ellipse at 22% 76%,rgba(39,104,255,.18),transparent 34%);pointer-events:none}
 .cinematic-copy{position:relative;z-index:2;max-width:650px}.hero-kicker{font-size:14px;font-weight:800;color:#d8d9e6;margin-top:10px}.hero-cinematic h1{font-size:clamp(46px,7vw,82px);margin:8px 0 15px;letter-spacing:-3.5px}.hero-cinematic .hero-meta{display:flex;gap:16px;flex-wrap:wrap;color:#d7d9e4;font-size:14px;margin-top:12px}.hero-watch{box-shadow:0 12px 35px rgba(255,49,92,.25)}.hero-details{border-color:rgba(255,255,255,.2);background:rgba(7,9,22,.38);backdrop-filter:blur(10px)}.hero-dots{display:flex;gap:7px;margin-top:25px}.hero-dots button{width:24px;height:4px;border:0;border-radius:99px;background:rgba(255,255,255,.28);padding:0;cursor:pointer}.hero-dots button.active{width:38px;background:#fff}
 .stream-section{padding:26px 0 14px}.stream-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:14px}.stream-head h2{font-size:30px;letter-spacing:-1.5px;margin:3px 0 0}.section-eyebrow{font-size:10px;letter-spacing:1.8px;color:#8dbfff;font-weight:900}.see-all{background:none;border:0;color:#aeb7d3;cursor:pointer;font-weight:700}.see-all:hover{color:#fff}.rail{display:grid;grid-auto-flow:column;grid-auto-columns:190px;grid-template-rows:1fr;gap:13px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;padding:4px 2px 12px 1px;scrollbar-width:none}.rail::-webkit-scrollbar{display:none}.rail .card{scroll-snap-align:start}.rail .poster{height:275px}.rail .card-body{padding:11px}.rail .details{display:none}.rail .card .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rail .card .platform{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.universe-pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:13px}.universe-pills::-webkit-scrollbar{display:none}.universe-pill{white-space:nowrap;padding:9px 14px;border-radius:999px;border:1px solid rgba(120,120,220,.24);background:rgba(12,15,32,.72);color:#cfd3e3;cursor:pointer}.universe-pill.active{background:linear-gradient(135deg,rgba(43,132,255,.3),rgba(255,49,92,.26));border-color:rgba(120,170,255,.6);color:#fff}.continue-empty{color:var(--muted);padding:16px 0 4px}.continue-section{padding-bottom:35px}
+.universe-pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:13px}.universe-pills::-webkit-scrollbar{display:none}.universe-pill{white-space:nowrap;padding:9px 14px;border-radius:999px;border:1px solid rgba(120,120,220,.24);background:rgba(12,15,32,.72);color:#cfd3e3;cursor:pointer}.universe-pill.active{background:linear-gradient(135deg,rgba(43,132,255,.3),rgba(255,49,92,.26));border-color:rgba(120,170,255,.6);color:#fff}.continue-empty{color:var(--muted);padding:16px 0 4px}
 .mobile-nav{display:none}
 @media(min-width:951px){.hero-cinematic{margin-left:auto;margin-right:auto}.hero-cinematic .hero-copy{padding-bottom:20px}.stream-section{padding-top:38px}.rail{grid-auto-columns:200px}.rail .poster{height:290px}}
-@media(max-width:950px){.hero-cinematic{min-height:560px;padding:110px 18px 32px;border-radius:0 0 28px 28px;align-items:flex-end}.hero-backdrop{background-position:62% center}.hero-cinematic h1{font-size:clamp(42px,11vw,62px);line-height:.96;letter-spacing:-2.7px}.hero-kicker{font-size:13px}.hero-cinematic .hero-meta{gap:10px;font-size:13px}.stream-section{padding:25px 0 7px}.stream-head h2{font-size:26px}.stream-head .see-all{font-size:12px}.rail{grid-auto-columns:152px;gap:10px;margin-right:-14px;padding-right:14px}.rail .poster{height:225px}.rail .card-body{padding:9px}.rail .card .title{font-size:13px}.rail .card .meta{font-size:10px}.rail .card .platform{font-size:9px;margin-top:7px}.universe-pills{margin-right:-14px;padding-right:14px}.mobile-nav{position:fixed;display:flex;left:10px;right:10px;bottom:10px;z-index:50;justify-content:space-around;padding:8px 6px;border:1px solid rgba(134,116,255,.22);border-radius:18px;background:rgba(7,9,22,.9);backdrop-filter:blur(18px);box-shadow:0 12px 40px rgba(0,0,0,.55)}.mobile-nav button{flex:1;background:none;border:0;color:#aeb5ca;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px;cursor:pointer}.mobile-nav button.active,.mobile-nav button:hover{color:#fff}.mobile-nav .mn-icon{font-size:18px;line-height:1}.continue-section{padding-bottom:95px}}
+@media(max-width:950px){.hero-cinematic{min-height:560px;padding:110px 18px 32px;border-radius:0 0 28px 28px;align-items:flex-end}.hero-backdrop{background-position:62% center}.hero-cinematic h1{font-size:clamp(42px,11vw,62px);line-height:.96;letter-spacing:-2.7px}.hero-kicker{font-size:13px}.hero-cinematic .hero-meta{gap:10px;font-size:13px}.stream-section{padding:25px 0 7px}.stream-head h2{font-size:26px}.stream-head .see-all{font-size:12px}.rail{grid-auto-columns:152px;gap:10px;margin-right:-14px;padding-right:14px}.rail .poster{height:225px}.rail .card-body{padding:9px}.rail .card .title{font-size:13px}.rail .card .meta{font-size:10px}.rail .card .platform{font-size:9px;margin-top:7px}.universe-pills{margin-right:-14px;padding-right:14px}.mobile-nav{position:fixed;display:flex;left:10px;right:10px;bottom:10px;z-index:50;justify-content:space-around;padding:8px 6px;border:1px solid rgba(134,116,255,.22);border-radius:18px;background:rgba(7,9,22,.9);backdrop-filter:blur(18px);box-shadow:0 12px 40px rgba(0,0,0,.55)}.mobile-nav button{flex:1;background:none;border:0;color:#aeb5ca;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px;cursor:pointer}.mobile-nav button.active,.mobile-nav button:hover{color:#fff}.mobile-nav .mn-icon{font-size:18px;line-height:1}}
 @media(max-width:620px){.hero-cinematic{min-height:535px;padding:105px 14px 27px}.hero-cinematic .eyebrow{font-size:10px}.hero-cinematic h1{margin:7px 0 12px}.hero-cinematic .hero-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hero-cinematic .hero-buttons>*{min-height:47px}.hero-dots{margin-top:20px}.stream-head{align-items:center}.stream-head h2{font-size:24px}.section-eyebrow{font-size:9px}.rail{grid-auto-columns:145px}.rail .poster{height:215px}}
+
+/* V29 — fundo cósmico inspirado exatamente na referência mobile */
+body{background:
+radial-gradient(ellipse at 82% 8%,rgba(160,76,255,.30),transparent 20%),
+radial-gradient(ellipse at 18% 22%,rgba(22,105,255,.25),transparent 25%),
+radial-gradient(ellipse at 70% 48%,rgba(76,42,190,.22),transparent 28%),
+linear-gradient(180deg,#01040c 0%,#020817 42%,#02050d 100%);}
+body:after{opacity:.95;filter:blur(28px);background:
+radial-gradient(ellipse 30% 12% at 78% 12%,rgba(163,78,255,.60),transparent 72%),
+radial-gradient(ellipse 34% 12% at 26% 30%,rgba(27,119,255,.35),transparent 72%),
+radial-gradient(ellipse 28% 10% at 58% 62%,rgba(105,39,255,.30),transparent 72%);}
+.hero-cinematic{background:#01050d;box-shadow:inset 0 -90px 100px rgba(0,0,0,.35);}
+.hero-backdrop{background:
+radial-gradient(ellipse at 82% 16%,rgba(255,180,245,.92) 0 1.5%,rgba(159,76,255,.75) 3%,rgba(65,48,190,.42) 8%,transparent 18%),
+radial-gradient(ellipse at 78% 16%,transparent 0 9%,rgba(130,76,255,.48) 9.5% 10%,transparent 10.7% 13%,rgba(103,74,245,.38) 13.5% 14.3%,transparent 15% 18%,rgba(80,78,220,.24) 18.5% 19.2%,transparent 20%),
+radial-gradient(circle at 54% 77%,#0b1b3a 0 18%,#061126 19% 28%,#020813 29% 34%,transparent 35%),
+radial-gradient(circle at 54% 77%,transparent 0 28%,rgba(50,144,255,.62) 29% 30%,transparent 31% 33%,rgba(30,97,255,.32) 34% 35%,transparent 36%),
+radial-gradient(ellipse at 15% 48%,rgba(13,83,190,.42),transparent 22%),
+linear-gradient(145deg,#02050d 0%,#03122c 48%,#02050d 100%);
+filter:saturate(1.18);}
+.hero-backdrop:before{content:"";position:absolute;inset:0;background:
+radial-gradient(circle at 5% 18%,rgba(35,142,255,.75) 0 2px,transparent 3px),
+radial-gradient(circle at 21% 28%,rgba(255,255,255,.9) 0 1px,transparent 2px),
+radial-gradient(circle at 62% 22%,rgba(255,255,255,.85) 0 1px,transparent 2px),
+radial-gradient(circle at 92% 35%,rgba(255,255,255,.8) 0 1px,transparent 2px),
+radial-gradient(circle at 34% 72%,rgba(255,255,255,.75) 0 1px,transparent 2px),
+radial-gradient(circle at 88% 70%,rgba(255,255,255,.8) 0 1px,transparent 2px);background-size:160px 190px,210px 230px,260px 280px,190px 220px,230px 260px,300px 250px;opacity:.75;}
+.hero-backdrop:after{content:"";position:absolute;left:-7%;top:7%;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 50% 50%,transparent 0 27%,#06152e 28% 39%,transparent 40% 48%,#06152e 49% 57%,transparent 58%),radial-gradient(circle,#0b2c63 0 23%,#01050d 24% 100%);box-shadow:0 0 30px rgba(27,126,255,.55);opacity:.9;transform:rotate(-18deg);}
+@media(max-width:950px){.hero-backdrop{background-position:center}.hero-backdrop:after{left:-38px;top:55px;width:125px;height:125px}.hero-cinematic{background:transparent;box-shadow:none}.hero-cinematic .hero-copy:after{background:radial-gradient(ellipse at 45% 55%,rgba(0,0,0,.80),transparent 70%);}}
+@media(max-width:620px){.hero-cinematic{min-height:575px;padding:100px 14px 28px}.hero-backdrop:before{opacity:.9}.hero-backdrop:after{left:-30px;top:58px;width:100px;height:100px}.hero-cinematic .hero-copy{max-width:355px}.hero-cinematic h1{font-size:clamp(40px,10vw,56px);max-width:355px}.hero-cinematic .hero-desc{max-width:345px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}}
 </style>
 
 <style>
@@ -166,8 +196,22 @@ header{background:rgba(4,5,15,.78);border-bottom-color:rgba(145,120,255,.22);box
 }
 </style>
 
+
+<style id="nexora-cosmic-final-v30">
+/* V30 — fundo cósmico local, determinístico e sem dependência de backdrop externo */
+html,body{background:#01040c!important;}
+body{position:relative!important;overflow-x:hidden!important;}
+body:after{display:none!important;}
+body:before{z-index:-2!important;opacity:.55!important;}
+.nexora-cosmic-layer{position:fixed;inset:0;z-index:-3;pointer-events:none;background:#01040c url("nexora-cosmic-bg.svg") center top/cover no-repeat;}
+.hero-cinematic{background:transparent!important;isolation:isolate;}
+.hero-cinematic .hero-backdrop{display:none!important;}
+.hero-cinematic .hero-vignette{background:linear-gradient(90deg,rgba(1,4,12,.82) 0%,rgba(1,4,12,.52) 45%,rgba(1,4,12,.18) 72%,rgba(1,4,12,.45) 100%),linear-gradient(180deg,rgba(1,4,12,.08) 45%,rgba(1,4,12,.82) 100%)!important;}
+@media(max-width:620px){.nexora-cosmic-layer{background-position:center top;background-size:auto 100%;}.hero-cinematic{min-height:575px!important;padding-bottom:28px!important;}.hero-cinematic .hero-vignette{background:linear-gradient(180deg,rgba(1,4,12,.08) 18%,rgba(1,4,12,.32) 46%,rgba(1,4,12,.94) 100%)!important;}}
+@media(prefers-reduced-motion:reduce){body:before{animation:none!important;}}
+</style>
 </head>
-<body>
+<body><div class="nexora-cosmic-layer" aria-hidden="true"></div>
 <header><div class="container nav">
   <div class="brand"><div class="logo"><span>NEX</span><span class="logo-x">X</span><span class="logo-o">O</span><span>RA</span></div><div class="brand-tagline">Seu universo de filmes e séries.</div></div>
   <nav><a href="#inicio">Início</a><a href="#lancamentos">Catálogo</a><a href="#proximos">Próximos</a><a href="#lista">Minha lista</a></nav>
@@ -213,11 +257,7 @@ header{background:rgba(4,5,15,.78);border-bottom-color:rgba(145,120,255,.22);box
   <div class="rail" id="universeRail"></div>
 </section>
 
-<section class="stream-section container continue-section" id="continuar">
-  <div class="stream-head"><div><span class="section-eyebrow">RETOMAR</span><h2>Continue assistindo</h2></div></div>
-  <div class="rail" id="continueRail"></div>
-  <div class="continue-empty" id="continueEmpty">Você ainda não começou nenhum título. Abra um filme ou série e ele aparecerá aqui.</div>
-</section>
+
 
 <section class="section container" id="lancamentos">
   <div class="section-head"><div><h2>Catálogo</h2><p>Filmes e séries atualizados para você descobrir o que assistir.</p></div><span class="count" id="count"></span></div>
@@ -617,7 +657,6 @@ async function openById(id,mediaType,fallbackTitle=""){
     };
   }
   if(!x)return;
-  rememberContinue(x);
   const box=document.getElementById("modalContent");
   document.getElementById("modal").classList.add("open");
   box.innerHTML="<p>Carregando detalhes...</p>";
@@ -785,16 +824,11 @@ function renderHomeRails(){
   const pills=document.getElementById("universePills");pills.innerHTML=`<button class=\"universe-pill ${universeGenre==="all"?"active":""}\" onclick=\"setUniverse('all')\">✨ Para descobrir</button>`+genres.map(g=>`<button class=\"universe-pill ${universeGenre===g?"active":""}\" onclick=\"setUniverse('${g}')\">${escapeHtml(g)}</button>`).join("");
   const uni=universeGenre==="all"?hot.slice(0,12):data.filter(x=>x.genres.includes(universeGenre)||x.categories?.includes(universeGenre)).sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
   renderRail("universeRail",uni);
-  renderContinue();
 }
 function setUniverse(g){universeGenre=g;renderHomeRails()}
-function getContinue(){try{const j=JSON.parse(storageGet("nexora-continue","[]"));return Array.isArray(j)?j:[]}catch{return []}}
-function renderContinue(){const box=document.getElementById("continueRail"),empty=document.getElementById("continueEmpty"),items=getContinue().map(k=>data.find(x=>mediaKey(x)===k.key)||{id:k.id,mediaType:k.mediaType,title:k.title,type:k.mediaType==="tv"?"serie":"filme",rating:k.rating||"0.0",date:k.date||"",platform:k.platform||"Streaming",providers:k.providers||[],genres:k.genres||[],user_rating:null,user_rating_votes:0,desc:k.desc||"",img:k.img||"",c1:"#20254b",c2:"#0f1117"}).filter(Boolean);
-  box.innerHTML=items.length?items.slice(0,8).map(x=>railCard(x)).join(""):"";empty.style.display=items.length?"none":"block"}
-function rememberContinue(x){if(!x?.id)return;let list=getContinue().filter(k=>k.key!==mediaKey(x));list.unshift({key:mediaKey(x),id:x.id,mediaType:x.mediaType,title:x.title,rating:x.rating,date:x.date,platform:x.platform,providers:x.providers||[],genres:x.genres||[],desc:x.desc||"",img:x.img||""});storageSet("nexora-continue",JSON.stringify(list.slice(0,12)));renderContinue()}
-async function loadHero(){try{const r=await apiFetch(`/title/movie/${FEATURED_TMDB_ID}`);if(!r.ok)throw new Error("hero");const j=await r.json(),d=j.detail||{};featuredItem={id:FEATURED_TMDB_ID,mediaType:"movie",title:d.title||"Duna: Parte Dois"};document.getElementById("heroTitle").textContent=featuredItem.title;document.getElementById("heroDesc").textContent=miniSynopsis(d.overview||"Uma nova jornada pelo deserto de Arrakis.");document.getElementById("heroMeta").innerHTML=`<span>🎬 Filme</span><span>⭐ ${Number(d.vote_average||0).toFixed(1)}</span><span>${escapeHtml(formatBrDate(d.release_date||"2024-03-01").slice(-4))}</span>`;if(d.backdrop_path)document.getElementById("heroBackdrop").style.backgroundImage=`linear-gradient(90deg,rgba(4,6,18,.98) 0%,rgba(5,7,20,.86) 34%,rgba(5,7,20,.3) 66%,rgba(5,7,20,.8) 100%),linear-gradient(180deg,rgba(4,6,18,.15) 42%,#080914 100%),url("${IMAGE_BACKDROP_BASE+d.backdrop_path}")`; }catch(e){console.warn("Hero:",e)}}
+async function loadHero(){try{const r=await apiFetch(`/title/movie/${FEATURED_TMDB_ID}`);if(!r.ok)throw new Error("hero");const j=await r.json(),d=j.detail||{};featuredItem={id:FEATURED_TMDB_ID,mediaType:"movie",title:d.title||"Duna: Parte Dois"};document.getElementById("heroTitle").textContent=featuredItem.title;document.getElementById("heroDesc").textContent=miniSynopsis(d.overview||"Uma nova jornada pelo deserto de Arrakis.");document.getElementById("heroMeta").innerHTML=`<span>🎬 Filme</span><span>⭐ ${Number(d.vote_average||0).toFixed(1)}</span><span>${escapeHtml(formatBrDate(d.release_date||"2024-03-01").slice(-4))}</span>`;}catch(e){console.warn("Hero:",e)}}
 function heroDetails(){openById(FEATURED_TMDB_ID,"movie","Duna: Parte Dois")}
-function heroWatchNow(){rememberContinue({id:FEATURED_TMDB_ID,tmdbId:FEATURED_TMDB_ID,title:featuredItem.title,mediaType:"movie",type:"filme",rating:"8.8",date:"01/03/2024",platform:"Streaming",providers:[],genres:["Ficção","Ação"],desc:"Uma nova jornada pelo deserto de Arrakis.",img:""});heroDetails()}
+function heroWatchNow(){heroDetails()}
 
 document.getElementById("favCount").textContent=favorites.length;
 render();
