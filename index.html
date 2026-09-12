@@ -39,7 +39,7 @@ linear-gradient(160deg,#31204d,#d84955 55%,#151522);box-shadow:0 30px 80px #000;
 .recommend{background:linear-gradient(120deg,#161323,#10141b);border:1px solid var(--line);border-radius:24px;padding:25px}.options{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}.option{border:1px solid var(--line);background:#0d0f15;color:#ddd;border-radius:11px;padding:10px 13px;cursor:pointer}.option.selected{border-color:#9a75ff;background:#241b3b}.recommend-result{margin-top:20px;padding:18px;border-radius:16px;background:#0b0d12;display:none}
 .empty{text-align:center;color:var(--muted);padding:45px}.count{color:var(--muted);font-size:13px}
 footer{border-top:1px solid var(--line);margin-top:50px;padding:35px 0;color:var(--muted);font-size:13px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.open{display:flex}.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#101219;border:1px solid #2c3040;border-radius:22px;padding:25px;position:relative}.close{position:absolute;right:15px;top:15px;border:0;background:#222631;color:white;border-radius:50%;width:36px;height:36px;cursor:pointer}.modal-cover{position:relative;overflow:hidden;height:210px;border-radius:16px;margin-bottom:20px;display:flex;align-items:end;padding:20px;background:linear-gradient(135deg,var(--c1),var(--c2));font-size:36px;font-weight:950}.modal p{color:#c5c8d2;line-height:1.65}.modal .synopsis{margin:18px 0 0;padding:14px 16px;border:1px solid #2c3040;border-radius:14px;background:#151822}.modal .synopsis-title{display:block;margin-bottom:6px;color:#fff;font-weight:900}.modal .synopsis-text{margin:0;color:#c5c8d2;line-height:1.6}.watch-area{margin:16px 0}.watch-options{display:none;margin-top:12px;padding:14px;border:1px solid #2c3040;border-radius:14px;background:#151822}.watch-options.open{display:block}.provider-list{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.provider-chip{display:inline-flex;padding:8px 10px;border-radius:999px;background:#232735;color:#fff;font-size:13px}.watch-link{display:inline-block;text-decoration:none;margin-top:8px}.modal-info{display:flex;gap:8px;flex-wrap:wrap;color:#bfc2cc;font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.open{display:flex}.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#101219;border:1px solid #2c3040;border-radius:22px;padding:25px;position:relative}.close{position:absolute;right:15px;top:15px;border:0;background:#222631;color:white;border-radius:50%;width:36px;height:36px;cursor:pointer}.modal-cover{position:relative;overflow:hidden;height:210px;border-radius:16px;margin-bottom:20px;display:flex;align-items:end;padding:20px;background:linear-gradient(135deg,var(--c1),var(--c2));font-size:36px;font-weight:950}.modal p{color:#c5c8d2;line-height:1.65}.modal .synopsis{margin:18px 0 0;padding:14px 16px;border:1px solid #2c3040;border-radius:14px;background:#151822}.modal .synopsis-title{display:block;margin-bottom:6px;color:#fff;font-weight:900}.modal .synopsis-text{margin:0;color:#c5c8d2;line-height:1.6}.watch-area{margin:16px 0}.watch-options{display:none;margin-top:12px;padding:14px;border:1px solid #2c3040;border-radius:14px;background:#151822}.watch-options.open{display:block}.provider-list{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.provider-chip{display:inline-flex;padding:8px 10px;border-radius:999px;background:#232735;color:#fff;font-size:13px}.watch-link{display:inline-block;text-decoration:none;margin-top:8px}.modal-info{display:flex;gap:8px;flex-wrap:wrap;color:#bfc2cc;font-size:13px}.user-rating{margin:18px 0;padding:16px;border:1px solid #2c3040;border-radius:14px;background:#151822}.user-rating strong{color:#fff}.rating-stars{letter-spacing:2px;font-size:20px;display:inline-flex;align-items:center}.rating-stars .star-half{display:inline-block;position:relative;color:#ffd45a;width:1em;overflow:hidden;vertical-align:middle}.rating-stars .star-half::after{content:"★";position:absolute;left:50%;top:0;width:50%;overflow:hidden;color:#202431}.rating-stars .star-empty{color:#5c6070}.rating-stars .star-full{color:#ffd45a}.rating-stars .stars-empty{color:#5c6070}.rating-votes{color:var(--muted);font-size:12px;margin-left:6px}.rating-buttons{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px}.rating-buttons button{border:1px solid #34394a;background:#202431;color:#fff;border-radius:9px;padding:7px 9px;cursor:pointer;min-width:42px}.rating-buttons button:hover,.rating-buttons button.selected{border-color:#9a75ff;background:#2a2141;box-shadow:0 0 0 1px rgba(154,117,255,.25)}.my-rating{margin-top:8px;color:var(--muted);font-size:12px}.rating-login{color:var(--muted);font-size:12px;margin-top:8px}
 @media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}.hero-art{display:none}.feature-grid{grid-template-columns:1fr 1fr}.feature.big{grid-column:1/-1}.upcoming-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){nav{display:none}.nav{justify-content:space-between}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.poster{height:235px}.feature-grid,.upcoming-grid{grid-template-columns:1fr}.feature.big{grid-column:auto}.upcoming-poster{height:340px}h1{letter-spacing:-2px}.hero{padding-top:45px}.section{padding:30px 0}}
 </style>
@@ -168,6 +168,7 @@ async function loadCatalog(){
       genres:Array.isArray(x.genres)?x.genres:[],
       categories:Array.isArray(x.categories)?x.categories:[],
       rating:Number(x.vote_average||0).toFixed(1),
+      user_rating:x.user_rating==null?null:Number(x.user_rating),user_rating_votes:Number(x.user_rating_votes||0),
       desc:x.overview||"Sem sinopse disponível.",
       c1:"#2a2d3a",c2:"#0f1117",
       tag:x.is_new?"NOVO":"EM DESTAQUE",
@@ -232,12 +233,47 @@ function normalizeCardData(x={}){
     platform:safe(x.platform||"Streaming"),
     providers,genres,
     rating:safe(x.rating,"0.0"),
+    userRating:x.user_rating==null?null:Number(x.user_rating),userRatingVotes:Number(x.user_rating_votes||0),
     desc:safe(x.desc||x.overview,"Sem sinopse disponível."),
     c1:safe(x.c1,"#2a2d3a"),c2:safe(x.c2,"#0f1117"),
     tag:safe(x.tag,"EM DESTAQUE"),
     img:safe(x.img,"")
   };
 }
+function userRatingStars(value){
+  if(value==null||Number.isNaN(Number(value)))return '<span class="stars-empty">☆☆☆☆☆</span>';
+  const v=Math.max(0,Math.min(5,Number(value)));
+  const full=Math.floor(v),half=v-full;
+  let out="";
+  for(let i=1;i<=5;i++){
+    if(i<=full) out+='<span class="star-full">★</span>';
+    else if(i===full+1&&half>=0.5) out+='<span class="star-half" aria-hidden="true">★</span>';
+    else out+='<span class="star-empty">☆</span>';
+  }
+  return out;
+}
+function userRatingHtml(x){
+  const avg=x.userRating==null?null:Number(x.userRating),votes=Number(x.userRatingVotes||0),mine=x.myRating==null?null:Number(x.myRating),sid=localStorage.getItem("telaflux_session");
+  const choices=[0,.5,1,1.5,2,2.5,3,3.5,4,4.5,5];
+  return `<div class="user-rating"><div><strong>⭐ Avaliação dos usuários</strong><div style="margin-top:7px"><span class="rating-stars">${userRatingStars(avg)}</span> <b>${avg==null?"Sem avaliações":avg.toFixed(1)+"/5"}</b><span class="rating-votes">· ${votes===0?"Ainda não há votos":votes.toLocaleString("pt-BR")+" "+(votes===1?"voto":"votos")}</span></div>${mine!=null?`<div class="my-rating">Sua nota: <b>${mine.toFixed(1)}/5</b></div>`:""}</div>${sid&&x.tmdbId?`<div class="rating-buttons"><span style="color:var(--muted);font-size:12px;width:100%">Sua nota (0 a 5 estrelas):</span>${choices.map(v=>`<button type="button" class="${mine===v?"selected":""}" aria-label="Dar ${v} estrela${v===1?"":"s"}" onclick="rateTitle(${Number(x.tmdbId)},'${x.mediaType}',${v})">${v===0?"0":v}★</button>`).join("")}</div>`:`<div class="rating-login">Entre na sua conta para avaliar este título.</div>`}</div>`;
+}
+async function rateTitle(tmdbId,mediaType,rating){
+  const sid=localStorage.getItem("telaflux_session");
+  if(!sid){alert("Entre na sua conta para avaliar este título.");return}
+  try{
+    const r=await apiFetch("/ratings",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json","x-telaflux-session":sid},body:JSON.stringify({tmdb_id:tmdbId,type:mediaType,rating})});
+    const j=await r.json();if(!r.ok)throw new Error(j.error||`HTTP ${r.status}`);
+    const x=data.find(a=>a.tmdbId===tmdbId&&a.mediaType===mediaType);if(x){x.userRating=j.average;x.userRatingVotes=j.votes}
+    const current=document.querySelector("#modal .user-rating");if(current&&x)current.outerHTML=userRatingHtml(x);
+    render();
+  }catch(e){console.error(e);alert("Não foi possível registrar sua nota agora.")}
+}
+async function loadUserRating(x){
+  if(!x?.tmdbId)return x;
+  try{const sid=localStorage.getItem("telaflux_session");const r=await apiFetch(`/ratings?tmdb_id=${encodeURIComponent(x.tmdbId)}&type=${encodeURIComponent(x.mediaType)}`,{headers:{Accept:"application/json",...(sid?{"x-telaflux-session":sid}: {})}});if(r.ok){const j=await r.json();x.userRating=j.average;x.userRatingVotes=Number(j.votes||0);x.myRating=j.mine}}catch(e){console.warn("Avaliação:",e)}
+  return x;
+}
+
 function fallbackCard(x={},index=0){
   const title=escapeHtml(x.title||"Sem título");
   const id=Number.isFinite(Number(x.id))?Number(x.id):0;
@@ -252,6 +288,7 @@ function fallbackCard(x={},index=0){
     <div class="card-body">
       <div class="title">${title}</div>
       <div class="meta">${escapeHtml(x.date||"Data não informada")} · ${x.type==="filme"?"Filme":"Série"} · <span class="rating">★ ${escapeHtml(x.rating||"0.0")}</span></div>
+      <div style="margin:6px 0;color:#ffd36b;font-size:12px">${x.userRating==null?"☆ Sem avaliações":`${userRatingStars(x.userRating)} <b style="color:var(--text)">${x.userRating.toFixed(1)}/5</b> · ${x.userRatingVotes.toLocaleString("pt-BR")} ${x.userRatingVotes===1?"voto":"votos"}`}</div>
       <span class="platform">${platform}</span>
       <div class="details"><button onclick="openById(${id},'${type}')">Detalhes</button></div>
     </div>
@@ -274,6 +311,7 @@ function card(x={}){
     <div class="card-body">
       <div class="title">${escapeHtml(x.title)}</div>
       <div class="meta">${escapeHtml(x.date||"Data não informada")} · ${x.type==="filme"?"Filme":"Série"} · <span class="rating">★ ${escapeHtml(x.rating)}</span></div>
+      <div style="margin:6px 0;color:#ffd36b;font-size:12px">${x.userRating==null?"☆ Sem avaliações":`${userRatingStars(x.userRating)} <b style="color:var(--text)">${x.userRating.toFixed(1)}/5</b> · ${x.userRatingVotes.toLocaleString("pt-BR")} ${x.userRatingVotes===1?"voto":"votos"}`}</div>
       <span class="platform">${escapeHtml((x.providers||[]).slice(0,2).join(" · ")||x.platform||"Streaming")}</span>
       <div class="details">
         <button onclick="openById(${x.id},'${x.mediaType}')">Detalhes</button>
@@ -417,6 +455,7 @@ async function openById(id,mediaType,fallbackTitle=""){
     const j=await r.json();
     const d=j.detail||{};
     const providers=await fetchProviders(x.mediaType,x.tmdbId);
+    await loadUserRating(x);
     box.innerHTML=detailHtml(x,d,j.credits||{},providers,j.videos||{});
   }catch(e){
     console.error(e);
@@ -440,7 +479,7 @@ function localDetailHtml(x){
   const watch=names.length
     ? `<div class="watch-area"><button class="primary" type="button" onclick="this.nextElementSibling.classList.toggle('open')">📺 Onde assistir</button><div  class="watch-options"><p><b>Disponível no Brasil:</b></p><div class="provider-list">${names.map(name=>`<span class="provider-chip">${escapeHtml(name)}</span>`).join("")}</div></div></div>`
     : `<div class="watch-area"><button class="ghost" type="button" onclick="this.nextElementSibling.classList.toggle('open')">📺 Onde assistir</button><div  class="watch-options"><p><b>Nenhuma plataforma encontrada no Brasil no momento.</b></p></div></div>`;
-  return `<div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${poster}<span style="position:relative;z-index:1">${escapeHtml(x.title)}</span></div><div class="modal-info"><span>${escapeHtml(x.date)}</span><span>★ ${escapeHtml(x.rating)}</span><span>${escapeHtml(x.type)}</span></div>${watch}<div class="synopsis"><span class="synopsis-title">📖 Sinopse</span><p class="synopsis-text">${escapeHtml(miniSynopsis(x.desc))}</p></div>`;
+  return `<div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${poster}<span style="position:relative;z-index:1">${escapeHtml(x.title)}</span></div><div class="modal-info"><span>${escapeHtml(x.date)}</span><span>★ ${escapeHtml(x.rating)}</span><span>${escapeHtml(x.type)}</span></div>${watch}${userRatingHtml(x)}<div class="synopsis"><span class="synopsis-title">📖 Sinopse</span><p class="synopsis-text">${escapeHtml(miniSynopsis(x.desc))}</p></div>`;
 }
 function detailHtml(x,d,credits,providers,videos){
   const title=d.title||d.name||x.title;
@@ -455,6 +494,7 @@ function detailHtml(x,d,credits,providers,videos){
   return `<div class="modal-cover" style="--c1:${x.c1};--c2:${x.c2}">${poster?`<img class="realposter" src="${escapeHtml(poster)}" alt="">`:""}<span style="position:relative;z-index:1">${escapeHtml(title)}</span></div>
     <div class="modal-info"><span>${escapeHtml(formatBrDate(d.release_date||d.first_air_date||x.date||""))}</span><span>★ ${Number(d.vote_average||x.rating||0).toFixed(1)}</span><span>${d.runtime?escapeHtml(d.runtime+" min"):""}</span></div>
     ${cast?`<p><b>Elenco:</b> ${cast}</p>`:""}${watch}
+    ${userRatingHtml(x)}
     <div class="synopsis"><span class="synopsis-title">📖 Sinopse</span><p class="synopsis-text">${escapeHtml(miniSynopsis(d.overview||x.desc||"Sem sinopse disponível."))}</p></div>
     ${trailerVideo?`<p><button class="primary" onclick="window.open('https://www.youtube.com/watch?v=${encodeURIComponent(trailerVideo.key)}','_blank','noopener')">▶ Assistir trailer</button></p>`:""}`;
 }
