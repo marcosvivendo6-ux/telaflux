@@ -290,4 +290,4 @@ app.get("/api/discover",async(req,res)=>{try{
   discoverCache.set(cacheKey,{data:response,expires:Date.now()+120000});if(discoverCache.size>40){const first=discoverCache.keys().next().value;discoverCache.delete(first)}
   res.setHeader("Cache-Control","public, max-age=60, stale-while-revalidate=180");res.json(response)
 }catch(e){console.error("discover:",e);res.status(500).json({error:"internal_error"})}});
-app.get("*",(req,res)=>{if(req.path.startsWith("/api/"))return res.status(404).json({error:"not_found"});res.sendFile(path.join(__dirname,"index.html"))});app.listen(PORT,()=>console.log(`COSMORA em http://localhost:${PORT}`));
+app.use((req,res)=>{if(req.path.startsWith("/api/"))return res.status(404).json({error:"not_found"});res.sendFile(path.join(__dirname,"index.html"))});app.listen(PORT,()=>console.log(`COSMORA em http://localhost:${PORT}`));
