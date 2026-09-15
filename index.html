@@ -128,6 +128,11 @@ radial-gradient(circle at 88% 70%,rgba(255,255,255,.8) 0 1px,transparent 2px);ba
 .hero-backdrop:after{content:"";position:absolute;left:-7%;top:7%;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 50% 50%,transparent 0 27%,#06152e 28% 39%,transparent 40% 48%,#06152e 49% 57%,transparent 58%),radial-gradient(circle,#0b2c63 0 23%,#01050d 24% 100%);box-shadow:0 0 30px rgba(27,126,255,.55);opacity:.9;transform:rotate(-18deg);}
 @media(max-width:950px){.hero-backdrop{background-position:center}.hero-backdrop:after{left:-38px;top:55px;width:125px;height:125px}.hero-cinematic{background:transparent;box-shadow:none}.hero-cinematic .hero-copy:after{background:radial-gradient(ellipse at 45% 55%,rgba(0,0,0,.80),transparent 70%);}}
 @media(max-width:620px){.hero-cinematic{min-height:575px;padding:100px 14px 28px}.hero-backdrop:before{opacity:.9}.hero-backdrop:after{left:-30px;top:58px;width:100px;height:100px}.hero-cinematic .hero-copy{max-width:355px}.hero-cinematic h1{font-size:clamp(40px,10vw,56px);max-width:355px}.hero-cinematic .hero-desc{max-width:345px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}}
+
+/* V32 — estreias de cinema do mês no topo */
+.cinema-month{padding:24px 0 8px}.cinema-month-shell{border:1px solid rgba(139,112,255,.20);border-radius:24px;background:linear-gradient(135deg,rgba(10,11,28,.88),rgba(8,14,31,.76));box-shadow:0 18px 55px rgba(0,0,0,.28);padding:20px;overflow:hidden}.cinema-month-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:15px}.cinema-month-head h2{margin:3px 0 0;font-size:28px;letter-spacing:-1.4px}.cinema-month-eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#8dbfff}.cinema-month-sub{color:var(--muted);font-size:12px;margin:6px 0 0}.cinema-month-count{font-size:11px;color:#aeb7d3;white-space:nowrap}.cinema-highlight{display:grid;grid-template-columns:120px 1fr;gap:15px;align-items:center;margin:0 0 15px;padding:12px;border-radius:18px;background:linear-gradient(110deg,rgba(77,62,151,.28),rgba(28,80,126,.16));border:1px solid rgba(141,191,255,.14);min-height:150px}.cinema-highlight-poster{height:145px;border-radius:12px;overflow:hidden;background:#0b0d16}.cinema-highlight-poster img{width:100%;height:100%;object-fit:cover;display:block}.cinema-highlight-copy{min-width:0}.cinema-highlight-kicker{font-size:9px;letter-spacing:1.7px;font-weight:900;color:#8dbfff;text-transform:uppercase}.cinema-highlight-title{font-size:21px;line-height:1.08;font-weight:900;letter-spacing:-.7px;margin:5px 0 7px}.cinema-highlight-meta{font-size:11px;color:#cbd3ea;line-height:1.45}.cinema-highlight-countdown{display:inline-flex;margin-top:9px;padding:7px 9px;border-radius:9px;background:rgba(0,0,0,.28);font-size:10px;font-weight:900}.cinema-filters{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:0 0 12px}.cinema-filters::-webkit-scrollbar{display:none}.cinema-filter{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#cbd3ea;border-radius:999px;padding:8px 11px;font:inherit;font-size:10px;font-weight:800;white-space:nowrap;cursor:pointer}.cinema-filter.active{background:rgba(124,92,255,.24);border-color:rgba(141,191,255,.4);color:#fff}.cinema-rail{display:grid;grid-auto-flow:column;grid-auto-columns:155px;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding:2px 2px 10px}.cinema-rail::-webkit-scrollbar{display:none}.cinema-card{scroll-snap-align:start;min-width:0}.cinema-card button{color:inherit;font:inherit;text-align:left}.cinema-poster{height:225px;border-radius:14px;overflow:hidden;position:relative;background:#0b0d16;border:1px solid rgba(255,255,255,.08);transition:transform .18s ease,border-color .18s ease}.cinema-card button:hover .cinema-poster,.cinema-card button:focus-visible .cinema-poster{transform:translateY(-2px);border-color:rgba(141,191,255,.42)}.cinema-poster img{width:100%;height:100%;object-fit:cover;display:block}.cinema-date{position:absolute;left:8px;top:8px;z-index:2;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);font-size:10px;font-weight:900}.cinema-status{position:absolute;right:8px;bottom:8px;z-index:2;padding:5px 7px;border-radius:7px;background:rgba(0,0,0,.72);font-size:9px;color:#fff}.cinema-card h3{font-size:13px;line-height:1.25;margin:9px 2px 0}.cinema-card p{font-size:10px;color:var(--muted);margin:5px 2px 0}.cinema-empty{padding:24px 4px;color:var(--muted);font-size:12px}.cinema-month .see-all{font-size:11px}@media(max-width:620px){.cinema-month{padding:18px 0 5px}.cinema-month-shell{border-radius:20px;padding:15px}.cinema-month-head{align-items:flex-start}.cinema-month-head h2{font-size:23px}.cinema-month-sub{max-width:280px}.cinema-highlight{grid-template-columns:92px 1fr;gap:11px;padding:10px;min-height:120px}.cinema-highlight-poster{height:120px}.cinema-highlight-title{font-size:17px}.cinema-highlight-meta{font-size:10px}.cinema-highlight-countdown{font-size:9px}.cinema-rail{grid-auto-columns:142px;gap:9px;margin-right:-3px}.cinema-poster{height:207px}.cinema-month-count{display:none}}
+@media(max-width:620px){.cinema-month{padding:18px 0 5px}.cinema-month-shell{border-radius:20px;padding:15px}.cinema-month-head{align-items:flex-start}.cinema-month-head h2{font-size:23px}.cinema-month-sub{max-width:280px}.cinema-rail{grid-auto-columns:142px;gap:9px;margin-right:-3px}.cinema-poster{height:207px}.cinema-month-count{display:none}}
+
 </style>
 
 <style>
@@ -223,6 +228,23 @@ body:before{z-index:-2!important;opacity:.55!important;}
 </div></header>
 
 <main id="inicio">
+
+<section class="cinema-month container" id="cinemaMes">
+  <div class="cinema-month-shell">
+    <div class="cinema-month-head">
+      <div><span class="cinema-month-eyebrow">TELA GRANDE</span><h2 id="cinemaMonthTitle">🎬 Estreias no cinema</h2><p class="cinema-month-sub">Os filmes que chegam às salas brasileiras neste mês.</p></div>
+      <span class="cinema-month-count" id="cinemaMonthCount">Atualizando...</span>
+    </div>
+    <div class="cinema-highlight" id="cinemaMonthHighlight" aria-live="polite"></div>
+    <div class="cinema-filters" role="group" aria-label="Filtrar estreias do cinema">
+      <button type="button" class="cinema-filter active" data-cinema-filter="all">Todas</button>
+      <button type="button" class="cinema-filter" data-cinema-filter="upcoming">Próximas</button>
+      <button type="button" class="cinema-filter" data-cinema-filter="now">Em cartaz</button>
+    </div>
+    <div class="cinema-rail" id="cinemaMonthRail"><div class="cinema-empty">Carregando as estreias do cinema...</div></div>
+  </div>
+</section>
+
 <section class="hero hero-cinematic container" id="destaque">
   <div class="hero-backdrop" id="heroBackdrop" aria-hidden="true"></div>
   <div class="hero-vignette" aria-hidden="true"></div>
@@ -591,6 +613,75 @@ function updateList(){
 
 function showList(){document.getElementById("lista").scrollIntoView({behavior:"smooth"});}
 
+
+let cinemaMonthItems=[];
+let cinemaMonthFilter="all";
+
+function cinemaDateStatus(value){
+  const m=String(value||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m)return {diff:null,label:"Data não informada"};
+  const d=Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3]));
+  const now=new Date();
+  const today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+  const diff=Math.round((d-today)/86400000);
+  return {diff,label:diff<0?"Já em cartaz":diff===0?"Estreia hoje":diff===1?"Estreia amanhã":`Estreia em ${diff} dias`};
+}
+
+function cinemaMonthRender(){
+  const rail=document.getElementById("cinemaMonthRail");
+  const highlight=document.getElementById("cinemaMonthHighlight");
+  const count=document.getElementById("cinemaMonthCount");
+  const items=cinemaMonthItems;
+  const filtered=items.filter(x=>{
+    const s=cinemaDateStatus(x.release_date);
+    if(cinemaMonthFilter==="upcoming")return s.diff!==null&&s.diff>=0;
+    if(cinemaMonthFilter==="now")return s.diff!==null&&s.diff<0;
+    return true;
+  });
+  count.textContent=`${filtered.length} ${filtered.length===1?"filme":"filmes"}`;
+  const next=items.find(x=>{const s=cinemaDateStatus(x.release_date);return s.diff!==null&&s.diff>=0})||items[0];
+  if(next){
+    const name=escapeHtml(next.title||"Sem título"), s=cinemaDateStatus(next.release_date);
+    const poster=next.poster_path?`<img src="${escapeHtml(IMAGE_CARD_BASE+next.poster_path)}" alt="Pôster de ${name}" loading="eager" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:'<div class="poster-placeholder">🎬</div>';
+    highlight.innerHTML=`<div class="cinema-highlight-poster">${poster}</div><div class="cinema-highlight-copy"><div class="cinema-highlight-kicker">Próxima grande estreia</div><div class="cinema-highlight-title">${name}</div><div class="cinema-highlight-meta">${escapeHtml(formatBrDate(next.release_date))} · ⭐ ${Number(next.vote_average||0).toFixed(1)}</div><span class="cinema-highlight-countdown">${escapeHtml(s.label)}</span></div>`;
+    highlight.onclick=()=>openById(Number(next.id),"movie",String(next.title||"Sem título"));
+    highlight.setAttribute("role","button");highlight.setAttribute("tabindex","0");highlight.setAttribute("aria-label",`Abrir detalhes de ${name}`);
+    highlight.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();highlight.click()}};
+  }else highlight.innerHTML="";
+  if(!filtered.length){rail.innerHTML='<div class="cinema-empty">Nenhum filme corresponde a este filtro.</div>';return;}
+  const fmtDate=v=>{const m=String(v||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}`:"--/--"};
+  rail.innerHTML=filtered.map(x=>{
+    const name=escapeHtml(x.title||"Sem título"),s=cinemaDateStatus(x.release_date);
+    const poster=x.poster_path?`<img src="${escapeHtml(IMAGE_CARD_BASE+x.poster_path)}" alt="Pôster de ${name}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:'<div class="poster-placeholder">🎬<span>Imagem indisponível</span></div>';
+    return `<article class="cinema-card"><button type="button" style="all:unset;display:block;width:100%;cursor:pointer" onclick="openById(${Number(x.id)},'movie',decodeURIComponent('${encodeURIComponent(String(x.title||"Título")).replace(/'/g,"%27")}'))" aria-label="Abrir detalhes de ${name}"><div class="cinema-poster">${poster}<span class="cinema-date">${fmtDate(x.release_date)}</span><span class="cinema-status">${escapeHtml(s.label)}</span></div><h3>${name}</h3><p>⭐ ${Number(x.vote_average||0).toFixed(1)}</p></button></article>`;
+  }).join("");
+}
+
+async function loadCinemaMonth(){
+  const title=document.getElementById("cinemaMonthTitle");
+  try{
+    const r=await apiFetch("/cinema-month",{headers:{Accept:"application/json"}});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    const j=await r.json();
+    cinemaMonthItems=Array.isArray(j.results)?j.results:[];
+    const monthDate=new Date(Number(j.period?.year||new Date().getFullYear()),Number(j.period?.month||new Date().getMonth()+1)-1,1);
+    const monthName=new Intl.DateTimeFormat("pt-BR",{month:"long"}).format(monthDate);
+    title.textContent=`🎬 Estreias no cinema em ${monthName}`;
+    cinemaMonthRender();
+  }catch(e){
+    console.warn("Estreias do cinema:",e);
+    document.getElementById("cinemaMonthRail").innerHTML='<div class="cinema-empty">Não foi possível atualizar as estreias do cinema agora.</div>';
+    document.getElementById("cinemaMonthHighlight").innerHTML="";
+    document.getElementById("cinemaMonthCount").textContent="Atualização indisponível";
+  }
+}
+
+document.querySelectorAll("[data-cinema-filter]").forEach(button=>button.addEventListener("click",()=>{
+  cinemaMonthFilter=button.dataset.cinemaFilter||"all";
+  document.querySelectorAll("[data-cinema-filter]").forEach(b=>b.classList.toggle("active",b===button));
+  cinemaMonthRender();
+}));
+
 async function loadUpcoming(){
   const majorBox=document.getElementById("upcomingMajorGrid");
   const discoveryBox=document.getElementById("upcomingDiscoveriesGrid");
@@ -861,6 +952,7 @@ render();
 loadHero();
 loadCatalog();
 setupInfiniteCatalog();
+loadCinemaMonth();
 loadUpcoming();
 loadProfile();
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
