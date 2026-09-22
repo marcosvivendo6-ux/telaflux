@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,46 +13,30 @@ const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 const REGION = "BR";
 
-// --------------------------------------------------
-// Configuração básica
-// --------------------------------------------------
-
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
-
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 const cache = new Map();
-const CACHE_TIME = 30 * 60 * 1000; // 30 minutos
+const CACHE_TIME = 30 * 60 * 1000;
 
 function getCache(key) {
   const item = cache.get(key);
   if (!item) return null;
-
   if (Date.now() - item.time > CACHE_TIME) {
     cache.delete(key);
     return null;
   }
-
   return item.data;
 }
 
 function setCache(key, data) {
-  cache.set(key, {
-    time: Date.now(),
-    data
-  });
+  cache.set(key, { time: Date.now(), data });
 }
 
 async function tmdb(endpoint, params = {}) {
-  if (!TMDB_API_KEY) {
-    throw new Error("TMDB_API_KEY não configurada.");
-  }
+  if (!TMDB_API_KEY) throw new Error("TMDB_API_KEY não configurada.");
 
   const url = new URL(`${TMDB_BASE_URL}${endpoint}`);
-
   url.searchParams.set("api_key", TMDB_API_KEY);
   url.searchParams.set("language", "pt-BR");
 
@@ -61,17 +47,15 @@ async function tmdb(endpoint, params = {}) {
   }
 
   const response = await fetch(url);
-
   if (!response.ok) {
     const body = await response.text();
     throw new Error(`TMDB ${response.status}: ${body}`);
   }
-
   return response.json();
 }
 
-function image(path) {
-  return path ? `${TMDB_IMAGE_BASE}${path}` : null;
+function image(p) {
+  return p ? `${TMDB_IMAGE_BASE}${p}` : null;
 }
 
 function normalizeMovie(item) {
@@ -104,8 +88,6 @@ function normalizeTV(item) {
   };
 }
 
-// IDs de provedores do TMDB usados no Brasil.
-// Podem ser ajustados futuramente sem alterar o restante da API.
 const PROVIDERS = {
   netflix: 8,
   "prime video": 119,
@@ -118,28 +100,116 @@ const PROVIDERS = {
   "apple tv": 350
 };
 
-// --------------------------------------------------
-// Saúde da API
-// --------------------------------------------------
+/* ==================================================
+   ADMIN — conteúdo manual
+   ================================================== */
+
+const ADMIN_KEY = process.env.ADMIN_KEY;
+const DATA_DIR = process.env.DATA_DIR || "/tmp/telaflux-data";
+const CONTENT_FILE = path.join(DATA_DIR, "content.json");
+
+function ensureContentFile() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(CONTENT_FILE)) {
+    fs.writeFileSync(CONTENT_FILE, JSON.stringify({ items: [] }, null, 2));
+  }
+}
+
+function readContent() {
+  ensureContentFile();
+  try {
+    return JSON.parse(fs.readFileSync(CONTENT_FILE, "utf8"));
+  } catch {
+    return { items: [] };
+  }
+}
+
+function writeContent(data) {
+  ensureContentFile();
+  fs.writeFileSync(CONTENT_FILE, JSON.stringify(data, null, 2));
+}
+
+function adminAuth(req, res, next) {
+  if (!ADMIN_KEY) {
+    return res.status(500).json({
+      error: "ADMIN_KEY não configurada no servidor."
+    });
+  }
+
+  const key = req.headers["x-admin-key"];
+
+  if (!key || key !== ADMIN_KEY) {
+    return res.status(401).json({
+      error: "Chave administrativa inválida."
+    });
+  }
+
+  next();
+}
+
+app.get("/api/admin/content", adminAuth, (req, res) => {
+  res.json(readContent());
+});
+
+app.post("/api/admin/content", adminAuth, (req, res) => {
+  const { title, media_type, tmdb_id } = req.body || {};
+
+  if (!title || !String(title).trim()) {
+    return res.status(400).json({ error: "Informe o título." });
+  }
+
+  if (!["movie", "tv"].includes(media_type)) {
+    return res.status(400).json({ error: "Tipo inválido." });
+  }
+
+  const data = readContent();
+
+  const item = {
+    id: Date.now(),
+    title: String(title).trim(),
+    media_type,
+    tmdb_id: Number.isInteger(Number(tmdb_id)) && Number(tmdb_id) > 0
+      ? Number(tmdb_id)
+      : null,
+    created_at: new Date().toISOString()
+  };
+
+  data.items.push(item);
+  writeContent(data);
+
+  res.status(201).json({ ok: true, item });
+});
+
+app.delete("/api/admin/content/:id", adminAuth, (req, res) => {
+  const id = Number(req.params.id);
+  const data = readContent();
+  const before = data.items.length;
+
+  data.items = data.items.filter(item => Number(item.id) !== id);
+
+  if (data.items.length === before) {
+    return res.status(404).json({ error: "Conteúdo não encontrado." });
+  }
+
+  writeContent(data);
+  res.json({ ok: true });
+});
+
+/* ==================================================
+   SAÚDE
+   ================================================== */
 
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
     message: "NEXXORA API funcionando",
-    version: "1.0.0"
+    version: "1.1.0"
   });
 });
 
-// --------------------------------------------------
-// Catálogo principal
-// GET /api/discover
-// Exemplos:
-// /api/discover
-// /api/discover?type=movie
-// /api/discover?platform=Netflix
-// /api/discover?platform=Marvel
-// /api/discover?platform=Animes
-// --------------------------------------------------
+/* ==================================================
+   CATÁLOGO
+   ================================================== */
 
 app.get("/api/discover", async (req, res) => {
   try {
@@ -152,13 +222,9 @@ app.get("/api/discover", async (req, res) => {
 
     const cacheKey = `discover:${platform}:${type}:${genre}:${page}`;
     const cached = getCache(cacheKey);
-
-    if (cached) {
-      return res.json(cached);
-    }
+    if (cached) return res.json(cached);
 
     const requestedType = String(type).toLowerCase();
-
     const results = [];
 
     const addMovies = async () => {
@@ -171,9 +237,9 @@ app.get("/api/discover", async (req, res) => {
 
       if (genre) params.with_genres = genre;
 
-      if (PROVIDERS[String(platform).toLowerCase()]) {
-        params.with_watch_providers =
-          PROVIDERS[String(platform).toLowerCase()];
+      const provider = PROVIDERS[String(platform).toLowerCase()];
+      if (provider) {
+        params.with_watch_providers = provider;
         params.watch_region = REGION;
       }
 
@@ -191,10 +257,8 @@ app.get("/api/discover", async (req, res) => {
 
       if (genre) params.with_genres = genre;
 
-      if (PROVIDERS[String(platform).toLowerCase()]) {
-        params.with_watch_providers =
-          PROVIDERS[String(platform).toLowerCase()];
-      }
+      const provider = PROVIDERS[String(platform).toLowerCase()];
+      if (provider) params.with_watch_providers = provider;
 
       const data = await tmdb("/discover/tv", params);
       results.push(...(data.results || []).map(normalizeTV));
@@ -208,15 +272,10 @@ app.get("/api/discover", async (req, res) => {
       await Promise.all([addMovies(), addTV()]);
     }
 
-    // Filtros especiais que não são provedores de streaming.
-    // Marvel e DC usam IDs de empresas do TMDB.
-    // Anime usa gênero/animação como aproximação inicial.
     const special = String(platform).toLowerCase();
 
     if (special === "marvel" || special === "dc") {
-      const company =
-        special === "marvel" ? 420 : 9993;
-
+      const company = special === "marvel" ? 420 : 9993;
       const companyData = await tmdb("/discover/movie", {
         with_companies: company,
         region: REGION,
@@ -224,11 +283,8 @@ app.get("/api/discover", async (req, res) => {
         page
       });
 
-      const specialResults =
-        (companyData.results || []).map(normalizeMovie);
-
       results.length = 0;
-      results.push(...specialResults);
+      results.push(...(companyData.results || []).map(normalizeMovie));
     }
 
     if (special === "animes") {
@@ -253,10 +309,8 @@ app.get("/api/discover", async (req, res) => {
 
     setCache(cacheKey, response);
     res.json(response);
-
   } catch (error) {
     console.error("Erro em /api/discover:", error.message);
-
     res.status(500).json({
       error: "Não foi possível carregar o catálogo.",
       details: error.message
@@ -264,38 +318,29 @@ app.get("/api/discover", async (req, res) => {
   }
 });
 
-// --------------------------------------------------
-// Filmes que chegam aos cinemas neste mês
-// GET /api/cinema-month
-// --------------------------------------------------
+/* ==================================================
+   CINEMA DO MÊS
+   ================================================== */
 
 app.get("/api/cinema-month", async (req, res) => {
   try {
     const now = new Date();
 
-    const year = Number(
-      new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Sao_Paulo",
-        year: "numeric"
-      }).format(now)
-    );
+    const year = Number(new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric"
+    }).format(now));
 
-    const month = Number(
-      new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Sao_Paulo",
-        month: "2-digit"
-      }).format(now)
-    );
+    const month = Number(new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Sao_Paulo",
+      month: "2-digit"
+    }).format(now));
 
     const key = `cinema-month:${year}-${String(month).padStart(2, "0")}`;
     const cached = getCache(key);
-
-    if (cached) {
-      return res.json(cached);
-    }
+    if (cached) return res.json(cached);
 
     const firstDay = `${year}-${String(month).padStart(2, "0")}-01`;
-
     const lastDayNumber = new Date(year, month, 0).getDate();
     const lastDay =
       `${year}-${String(month).padStart(2, "0")}-${String(lastDayNumber).padStart(2, "0")}`;
@@ -344,10 +389,8 @@ app.get("/api/cinema-month", async (req, res) => {
 
     setCache(key, response);
     res.json(response);
-
   } catch (error) {
     console.error("Erro em /api/cinema-month:", error.message);
-
     res.status(500).json({
       error: "Não foi possível carregar as estreias do cinema.",
       details: error.message
@@ -355,11 +398,9 @@ app.get("/api/cinema-month", async (req, res) => {
   }
 });
 
-// --------------------------------------------------
-// Conteúdo de streaming em destaque/chegando
-// GET /api/streaming
-// GET /api/streaming?platform=Netflix
-// --------------------------------------------------
+/* ==================================================
+   STREAMING
+   ================================================== */
 
 app.get("/api/streaming", async (req, res) => {
   try {
@@ -384,6 +425,7 @@ app.get("/api/streaming", async (req, res) => {
       with_release_type: "4|6",
       page: 1
     };
+
     if (provider) {
       movieParams.with_watch_providers = provider;
       movieParams.watch_region = REGION;
@@ -397,6 +439,7 @@ app.get("/api/streaming", async (req, res) => {
       "first_air_date.lte": end,
       page: 1
     };
+
     if (provider) tvParams.with_watch_providers = provider;
 
     const [movies, tv] = await Promise.all([
@@ -405,24 +448,33 @@ app.get("/api/streaming", async (req, res) => {
     ]);
 
     const results = [
-      ...(movies.results || []).map(item => ({...normalizeMovie(item), platform: platform || null})),
-      ...(tv.results || []).map(item => ({...normalizeTV(item), platform: platform || null}))
-    ].sort((a,b) => String(a.date || "").localeCompare(String(b.date || "")));
+      ...(movies.results || []).map(item => ({
+        ...normalizeMovie(item),
+        platform: platform || null
+      })),
+      ...(tv.results || []).map(item => ({
+        ...normalizeTV(item),
+        platform: platform || null
+      }))
+    ].sort((a, b) =>
+      String(a.date || "").localeCompare(String(b.date || ""))
+    );
 
     const response = { results };
     setCache(cacheKey, response);
     res.json(response);
   } catch (error) {
     console.error("Erro em /api/streaming:", error.message);
-    res.status(500).json({ error: "Não foi possível carregar os lançamentos de streaming.", details: error.message });
+    res.status(500).json({
+      error: "Não foi possível carregar os lançamentos de streaming.",
+      details: error.message
+    });
   }
 });
 
-// --------------------------------------------------
-// Detalhes de filme ou série
-// GET /api/title/movie/123
-// GET /api/title/tv/123
-// --------------------------------------------------
+/* ==================================================
+   DETALHES
+   ================================================== */
 
 app.get("/api/title/:type/:id", async (req, res) => {
   try {
@@ -430,17 +482,12 @@ app.get("/api/title/:type/:id", async (req, res) => {
     const id = Number(req.params.id);
 
     if (!Number.isInteger(id) || id <= 0) {
-      return res.status(400).json({
-        error: "ID inválido."
-      });
+      return res.status(400).json({ error: "ID inválido." });
     }
 
     const cacheKey = `title:${type}:${id}`;
     const cached = getCache(cacheKey);
-
-    if (cached) {
-      return res.json(cached);
-    }
+    if (cached) return res.json(cached);
 
     const data = await tmdb(`/${type}/${id}`, {
       append_to_response: "credits,videos,watch/providers"
@@ -454,10 +501,8 @@ app.get("/api/title/:type/:id", async (req, res) => {
 
     setCache(cacheKey, response);
     res.json(response);
-
   } catch (error) {
     console.error("Erro em /api/title:", error.message);
-
     res.status(500).json({
       error: "Não foi possível carregar os detalhes.",
       details: error.message
@@ -465,29 +510,14 @@ app.get("/api/title/:type/:id", async (req, res) => {
   }
 });
 
-// --------------------------------------------------
-// Onde assistir
-//
-// Aceita:
-// /api/watch?type=movie&id=123
-// /api/watch?type=tv&id=123
-//
-// Também:
-// /api/watch/movie/123
-// /api/watch/tv/123
-// --------------------------------------------------
+/* ==================================================
+   ONDE ASSISTIR
+   ================================================== */
 
 async function watchHandler(req, res) {
   try {
-    const type =
-      req.params.type ||
-      req.query.type ||
-      "movie";
-
-    const id = Number(
-      req.params.id ||
-      req.query.id
-    );
+    const type = req.params.type || req.query.type || "movie";
+    const id = Number(req.params.id || req.query.id);
 
     if (!["movie", "tv"].includes(type)) {
       return res.status(400).json({
@@ -496,23 +526,15 @@ async function watchHandler(req, res) {
     }
 
     if (!Number.isInteger(id) || id <= 0) {
-      return res.status(400).json({
-        error: "ID inválido."
-      });
+      return res.status(400).json({ error: "ID inválido." });
     }
 
     const cacheKey = `watch:${type}:${id}`;
     const cached = getCache(cacheKey);
-
-    if (cached) {
-      return res.json(cached);
-    }
+    if (cached) return res.json(cached);
 
     const data = await tmdb(`/${type}/${id}/watch/providers`);
-
-    const brazil = data.results?.BR || {
-      link: null
-    };
+    const brazil = data.results?.BR || { link: null };
 
     const response = {
       id,
@@ -528,10 +550,8 @@ async function watchHandler(req, res) {
 
     setCache(cacheKey, response);
     res.json(response);
-
   } catch (error) {
     console.error("Erro em /api/watch:", error.message);
-
     res.status(500).json({
       error: "Não foi possível consultar onde assistir.",
       details: error.message
@@ -542,10 +562,9 @@ async function watchHandler(req, res) {
 app.get("/api/watch", watchHandler);
 app.get("/api/watch/:type/:id", watchHandler);
 
-// --------------------------------------------------
-// Busca
-// GET /api/search?q=batman
-// --------------------------------------------------
+/* ==================================================
+   BUSCA
+   ================================================== */
 
 app.get("/api/search", async (req, res) => {
   try {
@@ -559,7 +578,6 @@ app.get("/api/search", async (req, res) => {
 
     const page = Number(req.query.page || 1);
     const cacheKey = `search:${q}:${page}`;
-
     const cached = getCache(cacheKey);
     if (cached) return res.json(cached);
 
@@ -586,10 +604,8 @@ app.get("/api/search", async (req, res) => {
 
     setCache(cacheKey, response);
     res.json(response);
-
   } catch (error) {
     console.error("Erro em /api/search:", error.message);
-
     res.status(500).json({
       error: "Não foi possível realizar a busca.",
       details: error.message
@@ -597,23 +613,16 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
-// --------------------------------------------------
-// Limpeza automática simples do cache
-// --------------------------------------------------
+/* ==================================================
+   LIMPEZA DO CACHE
+   ================================================== */
 
 setInterval(() => {
   const now = Date.now();
-
   for (const [key, item] of cache.entries()) {
-    if (now - item.time > CACHE_TIME) {
-      cache.delete(key);
-    }
+    if (now - item.time > CACHE_TIME) cache.delete(key);
   }
 }, 10 * 60 * 1000);
-
-// --------------------------------------------------
-// Início
-// --------------------------------------------------
 
 app.listen(PORT, () => {
   console.log(`NEXXORA API rodando na porta ${PORT}`);
