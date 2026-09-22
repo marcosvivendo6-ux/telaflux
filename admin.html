@@ -3,7 +3,7 @@
 <body><h1>🎬 TelaFlux Admin</h1><div class="box"><input id="key" type="password" placeholder="ADMIN_KEY"><input id="title" placeholder="Título"><select id="type"><option value="movie">Filme</option><option value="tv">Série</option></select><input id="tmdb" type="number" placeholder="TMDB ID"><button onclick="add()">Adicionar</button></div><div class="box"><h2>Conteúdo manual</h2><ul id="list"></ul></div>
 <script>
 const k=()=>document.getElementById('key').value;
-async function load(){let r=await fetch('https://telaflux-api.onrender.com/api/admin/content'+id,{headers:{'x-admin-key':k()}});let d=await r.json();document.getElementById('list').innerHTML=(d.items||[]).map(x=>`<li>${x.title} (${x.media_type}) <button onclick="del(${x.id})">Excluir</button></li>`).join('')}
-async function add(){await fetch('https://telaflux-api.onrender.com/api/admin/content'+id,{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':k()},body:JSON.stringify({title:document.getElementById('title').value,media_type:document.getElementById('type').value,tmdb_id:Number(document.getElementById('tmdb').value)||null})});load()}
+async function load(){let r=await fetch('https://telaflux-api.onrender.com/api/admin/content',{headers:{'x-admin-key':k()}});let d=await r.json();document.getElementById('list').innerHTML=(d.items||[]).map(x=>`<li>${x.title} (${x.media_type}) <button onclick="del(${x.id})">Excluir</button></li>`).join('')}
+async function add(){await fetch('https://telaflux-api.onrender.com/api/admin/content',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':k()},body:JSON.stringify({title:document.getElementById('title').value,media_type:document.getElementById('type').value,tmdb_id:Number(document.getElementById('tmdb').value)||null})});load()}
 async function del(id){await fetch('https://telaflux-api.onrender.com/api/admin/content/'+id,{method:'DELETE',headers:{'x-admin-key':k()}});load()}
 </script></body></html>
