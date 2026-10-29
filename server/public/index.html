@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>LeadHunter Brasil — Prospecção inteligente</title>
+<meta name="description" content="Encontre negócios, confira sites e organize oportunidades de criação de sites.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-icon">LH</span><span>LeadHunter<small>BRASIL</small></span></a>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav active" data-view="search"><span>⌕</span> Encontrar empresas</button>
+    <button class="nav" data-view="saved"><span>▣</span> Leads salvos <b id="savedCount">0</b></button>
+    <div class="sidebar-bottom"><div class="status-dot"></div><div><strong>Modo econômico</strong><small>Fontes públicas · sem API paga</small></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><div class="eyebrow">PROSPECÇÃO COMERCIAL</div><h1 id="pageTitle">Encontre sua próxima oportunidade.</h1><p>Descubra negócios locais e verifique sua presença digital.</p></div><div class="avatar">LH</div></header>
+    <section id="searchView">
+      <div class="hero">
+        <div class="hero-copy"><span class="pill"><span class="live"></span> PESQUISA NACIONAL</span><h2>Empresas reais.<br><em>Oportunidades melhores.</em></h2><p>Pesquise negócios por localização e segmento. Salve contatos e revise os links encontrados.</p></div>
+        <div class="hero-orb"><div class="orb-ring"></div><div class="orb-core">⌕</div><span class="orb-dot d1"></span><span class="orb-dot d2"></span><span class="orb-dot d3"></span></div>
+      </div>
+      <section class="panel search-panel">
+        <div class="panel-heading"><div><span class="step">01</span><h3>Defina sua pesquisa</h3></div><span class="muted">Fonte: OpenStreetMap</span></div>
+        <form id="searchForm" class="search-grid">
+          <label class="field location-field"><span>CIDADE</span><input id="city" required placeholder="Ex.: Campinas" value="São Paulo"></label>
+          <label class="field"><span>ESTADO (OPCIONAL)</span><select id="state"><option value="">Selecionar estado</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></label>
+          <label class="field"><span>SEGMENTO</span><select id="segment"><option value="all">Todos os segmentos</option><option value="auto">Oficinas e automotivo</option><option value="pets">Pet shops e veterinárias</option><option value="food">Restaurantes e alimentação</option><option value="clothing">Moda e calçados</option><option value="furniture">Móveis e decoração</option><option value="beauty">Beleza e estética</option><option value="health">Clínicas e saúde</option><option value="construction">Construção e reformas</option><option value="other">Outros negócios</option></select></label>
+          <label class="field"><span>RESULTADOS</span><select id="limit"><option value="30">Até 30</option><option value="50" selected>Até 50</option><option value="100">Até 100</option></select></label>
+          <button class="primary" id="searchButton" type="submit"><span>⌕</span> Buscar empresas</button>
+        </form>
+        <div class="search-note"><span>ⓘ</span> A cobertura depende dos dados públicos disponíveis para cada cidade.</div>
+      </section>
+      <div id="notice" class="notice hidden"></div>
+      <section id="resultsSection" class="results-section hidden">
+        <div class="results-head"><div><div class="eyebrow">RESULTADOS DA PESQUISA</div><h3 id="resultsTitle">Empresas encontradas</h3></div><button id="exportButton" class="secondary">↓ Exportar salvos CSV</button></div>
+        <div class="metrics"><div class="metric"><span>ENCONTRADAS</span><strong id="metricTotal">0</strong></div><div class="metric"><span>COM SITE REGISTRADO</span><strong id="metricSites">0</strong></div><div class="metric"><span>SEM SITE IDENTIFICADO</span><strong id="metricNoSites">0</strong></div><div class="metric"><span>INSTAGRAM ENCONTRADO</span><strong id="metricInstagram">0</strong></div></div>
+        <div class="toolbar"><input id="filterText" placeholder="Filtrar por nome, endereço ou telefone…"><select id="siteFilter"><option value="all">Todos os status de site</option><option value="no">Sem site identificado</option><option value="yes">Com site registrado</option></select><select id="sortBy"><option value="name">Ordenar: nome</option><option value="opportunity">Possível oportunidade primeiro</option></select></div>
+        <div id="resultsList" class="results-list"></div>
+        <p class="fineprint">“Sem site identificado” significa que esta fonte não registrou um endereço; não é prova de que a empresa não possua site.</p>
+      </section>
+    </section>
+    <section id="savedView" class="hidden">
+      <div class="saved-intro"><span class="pill">SEU PIPELINE</span><h2>Leads que você guardou.</h2><p>Os leads ficam salvos neste navegador. Para sincronizar entre dispositivos será necessário adicionar um banco de dados.</p><button id="savedExportButton" class="primary">↓ Exportar CSV</button></div>
+      <div id="savedList" class="results-list"></div>
+      <div id="emptySaved" class="empty-state"><div>▣</div><h3>Nenhum lead salvo ainda</h3><p>Faça uma pesquisa e salve as empresas que deseja abordar.</p><button class="secondary" id="backSearch">Encontrar empresas</button></div>
+    </section>
+    <footer><span>LeadHunter Brasil <span class="muted">· MVP 0.1</span></span><span>Dados públicos do OpenStreetMap · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">atribuição</a></span></footer>
+  </main>
+</div>
+<div id="toast" class="toast" role="status"></div>
+<dialog id="auditDialog"><form method="dialog"><button class="close-dialog" aria-label="Fechar">×</button></form><div class="eyebrow">REVISÃO DE PRESENÇA DIGITAL</div><h2 id="auditTitle">Auditoria de site</h2><p id="auditUrl" class="muted"></p><div id="auditResult" class="audit-result">Preparando verificação…</div><div class="audit-links" id="auditLinks"></div><p class="fineprint">Esta checagem básica não substitui auditoria de SEO, segurança ou revisão manual. Links do Instagram podem exigir confirmação diretamente no perfil.</p></dialog>
+<script src="/app.js"></script>
+</body></html>
